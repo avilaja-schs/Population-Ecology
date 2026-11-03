@@ -1285,14 +1285,18 @@ function genBide() {
   const n1 = n0 + dn;
   const unk = type === "missing" ? pick(["B", "I", "D", "E"]) : null;
   const vals = { B, I, D, E };
-  const q = { topic: "bide", type, kind: type === "trend" ? "choice" : "num", h, org, vals, IN, OUT, dn, n0, n1, unk };
+  // Test mode mixes up the order of B, I, D, E (in the story and the table) so students must read
+  // each label instead of memorizing "first two add, last two subtract". Saved here so it stays put.
+  const order = shuffle(["B", "I", "D", "E"]);
+  const q = { topic: "bide", type, kind: type === "trend" ? "choice" : "num", h, org, vals, IN, OUT, dn, n0, n1, unk, order };
   q.correct = type === "change" ? dn : type === "new" ? n1 : type === "missing" ? vals[unk] : (dn > 0 ? "grow" : dn < 0 ? "shrink" : "stable");
 
   q.view = () => {
     const o = orgName(org), place = L().place[h], ph = L().ph;
     const show = (k) => (k === unk ? T("some") : fmt(vals[k]));
     let story = type === "change" || type === "trend" ? T("bYear", { place }) + " " : T("bStart", { place, n: fmt(n0), o }) + " ";
-    story += T("bDuring", { B: ph.B(show("B")), I: ph.I(show("I")), D: ph.D(show("D")), E: ph.E(show("E")) });
+    if (state.mode === "test") story += order.map((k) => ph[k](show(k))).join(". ") + ".";
+    else story += T("bDuring", { B: ph.B(show("B")), I: ph.I(show("I")), D: ph.D(show("D")), E: ph.E(show("E")) });
     if (type === "missing") story += " " + T("bEnd", { n: fmt(n1), o });
     story = capSentences(story);
     const prompt = type === "change" ? T("qChange", { o }) : type === "trend" ? T("qTrend", { o })
@@ -1354,8 +1358,8 @@ function bideVisual(q) {
     // Test: plain data table (no arrows or formula)
     let rows = "";
     if (type === "new" || type === "missing") rows += `<tr><th>${T("startN")}</th><td>${fmt(q.n0)}</td></tr>`;
-    rows += `<tr><th>${T("births")}</th><td>${showVal("B")}</td></tr><tr><th>${T("imm")}</th><td>${showVal("I")}</td></tr>`;
-    rows += `<tr><th>${T("deaths")}</th><td>${showVal("D")}</td></tr><tr><th>${T("emi")}</th><td>${showVal("E")}</td></tr>`;
+    const label = { B: "births", I: "imm", D: "deaths", E: "emi" };
+    q.order.forEach((k) => { rows += `<tr><th>${T(label[k])}</th><td>${showVal(k)}</td></tr>`; });
     if (type === "missing") rows += `<tr><th>${T("endN")}</th><td>${fmt(q.n1)}</td></tr>`;
     return `<div style="overflow-x:auto"><table class="data">${rows}</table></div>`;
   }
