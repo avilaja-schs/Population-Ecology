@@ -15,6 +15,7 @@
   --in: #1d7f47; --in-bg: #d4f1df;               /* things that ADD to N (births, immigration) */
   --out: #b8352a; --out-bg: #fbdfda;             /* things that SUBTRACT from N (deaths, emigration) */
   --grid: #dbe7ea; --graph-bg: #f7fbfb;
+  --start: #1d4fa8; --start-bg: #dbe7fb;         /* blue highlight: the starting population */
   --good: #1d7f47; --good-bg: #d4f1df; --bad: #b8352a; --bad-bg: #fbdfda;
   --font-body: "Lexend", "Segoe UI", system-ui, sans-serif;
   --font-num: "JetBrains Mono", ui-monospace, "Consolas", monospace;
@@ -25,7 +26,7 @@
     --bg: #0b1b21; --surface: #11262e; --ink: #e2eff2; --muted: #8fb0ba; --line: #24434d; --chip: #19343d;
     --accent: #3ec1d0; --accent-ink: #04232a; --cover: #f2a33a; --cover-ink: #2b1700;
     --prey: #5fd07f; --pred: #ff9a5c; --in: #5bd894; --in-bg: #123a26; --out: #ff8576; --out-bg: #3f1b17;
-    --grid: #1d3740; --graph-bg: #0f2229;
+    --grid: #1d3740; --graph-bg: #0f2229; --start: #9cc2ff; --start-bg: #17305a;
     --good: #5bd894; --good-bg: #123a26; --bad: #ff8576; --bad-bg: #3f1b17; color-scheme: dark;
   }
 }
@@ -33,7 +34,7 @@
   --bg: #0b1b21; --surface: #11262e; --ink: #e2eff2; --muted: #8fb0ba; --line: #24434d; --chip: #19343d;
   --accent: #3ec1d0; --accent-ink: #04232a; --cover: #f2a33a; --cover-ink: #2b1700;
   --prey: #5fd07f; --pred: #ff9a5c; --in: #5bd894; --in-bg: #123a26; --out: #ff8576; --out-bg: #3f1b17;
-  --grid: #1d3740; --graph-bg: #0f2229;
+  --grid: #1d3740; --graph-bg: #0f2229; --start: #9cc2ff; --start-bg: #17305a;
   --good: #5bd894; --good-bg: #123a26; --bad: #ff8576; --bad-bg: #3f1b17; color-scheme: dark;
 }
 
@@ -203,6 +204,10 @@ footer ul { margin: 6px 0 0; padding-left: 1.2em; }
 .lab-q { margin: 0; font-weight: 500; }
 .choices.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 .lab-status { margin: 0; font-weight: 500; }
+/* starting population, highlighted in blue */
+.startn { background: var(--start-bg); color: var(--start); font-family: var(--font-num); font-weight: 700; border-radius: 6px; padding: 0 6px; white-space: nowrap; }
+table.data tr.start-row th, table.data tr.start-row td { background: var(--start-bg); color: var(--start); }
+#level-note { max-width: 16em; }
 #confetti { position: fixed; inset: 0; pointer-events: none; z-index: 50; width: 100%; height: 100%; }
 
 @media (max-width: 900px) {
@@ -282,7 +287,7 @@ const TXT = {
     answer: "Your answer", answerIs: "Correct answer:", explTitle: "How to get the answer", whyTitle: "Why",
     testIntro: "Test: get one question right on the first try to pass.", pass: "Right on the first try. You passed!",
     newTest: "Start a new test", testMiss: "That one did not count. Try another one.",
-    easyOff: "Tests use Medium and Hard only.",
+    easyOff: "Tests mix Medium and Hard questions at random.",
     tapHint: "Tap the graph to place your marker. You can move it. Then press Check.",
     time: "Time (years)", year: "Year", popSize: "Population size (N)", modelNote: "Model data (simplified) for practice.",
     keyTitle: "Vocabulary key", keyOff: "The vocabulary key is hidden during a test.",
@@ -509,7 +514,7 @@ const TXT = {
     answer: "Tu respuesta", answerIs: "Respuesta correcta:", explTitle: "Cómo obtener la respuesta", whyTitle: "Por qué",
     testIntro: "Examen: contesta una pregunta bien al primer intento para aprobar.", pass: "¡Correcto al primer intento! ¡Aprobaste!",
     newTest: "Empezar un nuevo examen", testMiss: "Esa no contó. Intenta otra.",
-    easyOff: "Los exámenes usan solo Medio y Difícil.",
+    easyOff: "Los exámenes mezclan preguntas de nivel Medio y Difícil al azar.",
     tapHint: "Toca la gráfica para poner tu marca. Puedes moverla. Luego presiona Revisar.",
     time: "Tiempo (años)", year: "Año", popSize: "Tamaño de la población (N)", modelNote: "Datos de un modelo (simplificado) para practicar.",
     keyTitle: "Vocabulario", keyOff: "El vocabulario está oculto durante el examen.",
@@ -729,7 +734,7 @@ const TXT = {
     answer: "Câu trả lời", answerIs: "Đáp án đúng:", explTitle: "Cách tìm đáp án", whyTitle: "Tại sao",
     testIntro: "Kiểm tra: trả lời đúng một câu ngay lần đầu để đạt.", pass: "Đúng ngay lần đầu. Em đã đạt!",
     newTest: "Làm bài kiểm tra mới", testMiss: "Câu đó không tính. Thử câu khác nhé.",
-    easyOff: "Bài kiểm tra chỉ dùng mức Vừa và Khó.",
+    easyOff: "Bài kiểm tra trộn ngẫu nhiên câu hỏi mức Vừa và Khó.",
     tapHint: "Chạm vào đồ thị để đặt dấu. Em có thể di chuyển dấu. Sau đó bấm Kiểm tra.",
     time: "Thời gian (năm)", year: "Năm", popSize: "Kích thước quần thể (N)", modelNote: "Dữ liệu mô hình (đơn giản hóa) để luyện tập.",
     keyTitle: "Từ vựng", keyOff: "Phần từ vựng bị ẩn trong bài kiểm tra.",
@@ -1090,7 +1095,7 @@ const TOPICS = ["bide", "curves", "k", "pp", "lf", "human"];
 const INOUT = { en: ["IN", "OUT"], es: ["ENTRA", "SALE"], vi: ["VÀO", "RA"] };
 
 const state = {
-  topic: "bide", mode: "practice", level: "easy", lang: "en",
+  topic: "bide", mode: "practice", level: "easy", practiceLevel: "easy", lang: "en",
   q: null, passed: false, showKey: true, showCalc: true, ppView: "questions", humView: "lab", lab: null, lastInputId: null,
 };
 
@@ -1294,7 +1299,8 @@ function genBide() {
   q.view = () => {
     const o = orgName(org), place = L().place[h], ph = L().ph;
     const show = (k) => (k === unk ? T("some") : fmt(vals[k]));
-    let story = type === "change" || type === "trend" ? T("bYear", { place }) + " " : T("bStart", { place, n: fmt(n0), o }) + " ";
+    const SENT = "\u0001";   // placeholder for the starting population, so it can be highlighted in blue
+    let story = type === "change" || type === "trend" ? T("bYear", { place }) + " " : T("bStart", { place, n: SENT, o }) + " ";
     if (state.mode === "test") story += order.map((k) => ph[k](show(k))).join(". ") + ".";
     else story += T("bDuring", { B: ph.B(show("B")), I: ph.I(show("I")), D: ph.D(show("D")), E: ph.E(show("E")) });
     if (type === "missing") story += " " + T("bEnd", { n: fmt(n1), o });
@@ -1302,7 +1308,9 @@ function genBide() {
     const prompt = type === "change" ? T("qChange", { o }) : type === "trend" ? T("qTrend", { o })
       : type === "new" ? T("qNew", { o }) : T("qMissing", { o, what: L().what[unk] });
     const sub = type === "change" ? T("subChange") : type === "new" ? T("subNew") : type === "missing" ? T("subMissing") : "";
-    return { prompt, story, sub, subHint: type !== "change", visual: bideVisual(q) };
+    const storyHTML = esc(story).replace(SENT, `<span class="startn">${fmt(n0)}</span>`);
+    story = story.replace(SENT, fmt(n0));
+    return { prompt, story, storyHTML, sub, subHint: type !== "change", visual: bideVisual(q) };
   };
   q.choices = () => [
     { id: "grow", label: T("growing"), desc: T("growingD") },
@@ -1357,7 +1365,7 @@ function bideVisual(q) {
   if (state.mode === "test") {
     // Test: plain data table (no arrows or formula)
     let rows = "";
-    if (type === "new" || type === "missing") rows += `<tr><th>${T("startN")}</th><td>${fmt(q.n0)}</td></tr>`;
+    if (type === "new" || type === "missing") rows += `<tr class="start-row"><th>${T("startN")}</th><td>${fmt(q.n0)}</td></tr>`;
     const label = { B: "births", I: "imm", D: "deaths", E: "emi" };
     q.order.forEach((k) => { rows += `<tr><th>${T(label[k])}</th><td>${showVal(k)}</td></tr>`; });
     if (type === "missing") rows += `<tr><th>${T("endN")}</th><td>${fmt(q.n1)}</td></tr>`;
@@ -1365,7 +1373,7 @@ function bideVisual(q) {
   }
   const flow = (k, dir) => `<div class="flow ${dir}${k === unk ? " unknown" : ""}"><span class="letter">${k}</span><span class="what">${esc((dir === "in" ? L().bideIn : L().bideOut)[k])}</span><span class="val">${showVal(k)}</span></div>`;
   let pop = `<div class="emoji" aria-hidden="true">${ORG[q.org].em}</div>`;
-  if (type === "new" || type === "missing") pop += `<div class="lab">${T("startN")}</div><div class="val">${fmt(q.n0)}</div>`;
+  if (type === "new" || type === "missing") pop += `<div class="lab">${T("startN")}</div><div class="val"><span class="startn">${fmt(q.n0)}</span></div>`;
   if (type === "new") pop += `<div class="lab">${T("endN")}</div><div class="val" style="color:var(--cover)">?</div>`;
   if (type === "missing") pop += `<div class="lab">${T("endN")}</div><div class="val">${fmt(q.n1)}</div>`;
   if (type === "change" || type === "trend") pop += `<div class="lab">N</div>`;
@@ -1662,6 +1670,7 @@ const GENERATORS = { bide: genBide, curves: genCurves, k: genK, pp: genPP, lf: g
 // ======================================================================
 function newQuestion() {
   stopSim();
+  if (state.mode === "test") state.level = Math.random() < 0.5 ? "medium" : "hard";   // tests mix Medium and Hard
   const q = GENERATORS[state.topic]();
   Object.assign(q, { tries: 0, done: false, solved: false, firstTry: null, picks: [], tap: null, feedback: null });
   state.q = q;
@@ -1683,7 +1692,12 @@ function renderStatic() {
   $("topics").innerHTML = TOPICS.map((t) => `<button type="button" class="topic" data-topic="${t}" aria-pressed="${state.topic === t}">${esc(L().topics[t][0])}<small>${esc(L().topics[t][1])}</small></button>`).join("");
   // segmented buttons
   document.querySelectorAll("#seg-mode button").forEach((b) => b.setAttribute("aria-pressed", b.dataset.mode === state.mode));
-  document.querySelectorAll("#seg-level button").forEach((b) => { b.setAttribute("aria-pressed", b.dataset.level === state.level); b.disabled = state.mode === "test" && b.dataset.level === "easy"; b.title = b.disabled ? T("easyOff") : ""; });
+  // Test mode: levels are picked at random (Medium or Hard) for each question, so the level buttons are locked
+  const test = state.mode === "test";
+  document.querySelectorAll("#seg-level button").forEach((b) => { b.setAttribute("aria-pressed", !test && b.dataset.level === state.level); b.disabled = test; b.title = test ? T("easyOff") : ""; });
+  let note = $("level-note");
+  if (!note) { note = document.createElement("span"); note.id = "level-note"; note.className = "muted"; $("seg-level").after(note); }
+  note.textContent = test ? T("easyOff") : ""; note.hidden = !test;
   document.querySelectorAll("#seg-lang button").forEach((b) => b.setAttribute("aria-pressed", b.dataset.lang === state.lang));
   $("btn-key").setAttribute("aria-pressed", state.showKey); $("btn-calc").setAttribute("aria-pressed", state.showCalc);
   // vocabulary key
@@ -1726,7 +1740,7 @@ function cardHTML(q) {
   let h = `<article class="card${q.solved ? " solved" : ""}" id="qcard">`;
   h += `<div class="qtag"><span>${esc(L().topics[q.topic][0])}</span><span>${esc(T(state.level))}</span></div>`;
   h += `<h2 class="prompt" id="q-prompt">${esc(v.prompt)}</h2>`;
-  if (v.story) h += `<p class="story" id="q-story">${esc(v.story)}</p>`;
+  if (v.story) h += `<p class="story" id="q-story">${v.storyHTML || esc(v.story)}</p>`;
   if (showSub) h += `<p class="sub" id="q-sub">${esc(v.sub)}</p>`;
   if (v.visual) h += v.visual;
   if (q.graph) {
@@ -2054,10 +2068,11 @@ function init() {
   $("seg-mode").addEventListener("click", (e) => {
     const b = e.target.closest("button[data-mode]"); if (!b) return;
     state.mode = b.dataset.mode; state.passed = false;
-    if (state.mode === "test") { if (state.level === "easy") state.level = "medium"; state.ppView = "questions"; state.humView = "questions"; }
+    if (state.mode === "test") { state.ppView = "questions"; state.humView = "questions"; }
+    else state.level = state.practiceLevel;   // back to the level the student picked for practice
     newQuestion();
   });
-  $("seg-level").addEventListener("click", (e) => { const b = e.target.closest("button[data-level]"); if (!b || b.disabled) return; state.level = b.dataset.level; newQuestion(); });
+  $("seg-level").addEventListener("click", (e) => { const b = e.target.closest("button[data-level]"); if (!b || b.disabled) return; state.level = state.practiceLevel = b.dataset.level; newQuestion(); });
   $("seg-lang").addEventListener("click", (e) => { const b = e.target.closest("button[data-lang]"); if (!b) return; state.lang = b.dataset.lang; store.set("pd-lang", state.lang); render(); });
   $("btn-read").addEventListener("click", readAloud);
   $("btn-key").addEventListener("click", () => { state.showKey = !state.showKey; renderStatic(); });
