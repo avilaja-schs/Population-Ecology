@@ -287,7 +287,7 @@ const TXT = {
     answer: "Your answer", answerIs: "Correct answer:", explTitle: "How to get the answer", whyTitle: "Why",
     testIntro: "Test: get one question right on the first try to pass.", pass: "Right on the first try. You passed!",
     newTest: "Start a new test", testMiss: "That one did not count. Try another one.",
-    easyOff: "Tests mix Medium and Hard questions at random.",
+    easyOff: "Tests use Medium questions only.",
     tapHint: "Tap the graph to place your marker. You can move it. Then press Check.",
     time: "Time (years)", year: "Year", popSize: "Population size (N)", modelNote: "Model data (simplified) for practice.",
     keyTitle: "Vocabulary key", keyOff: "The vocabulary key is hidden during a test.",
@@ -514,7 +514,7 @@ const TXT = {
     answer: "Tu respuesta", answerIs: "Respuesta correcta:", explTitle: "Cómo obtener la respuesta", whyTitle: "Por qué",
     testIntro: "Examen: contesta una pregunta bien al primer intento para aprobar.", pass: "¡Correcto al primer intento! ¡Aprobaste!",
     newTest: "Empezar un nuevo examen", testMiss: "Esa no contó. Intenta otra.",
-    easyOff: "Los exámenes mezclan preguntas de nivel Medio y Difícil al azar.",
+    easyOff: "Los exámenes usan solo preguntas de nivel Medio.",
     tapHint: "Toca la gráfica para poner tu marca. Puedes moverla. Luego presiona Revisar.",
     time: "Tiempo (años)", year: "Año", popSize: "Tamaño de la población (N)", modelNote: "Datos de un modelo (simplificado) para practicar.",
     keyTitle: "Vocabulario", keyOff: "El vocabulario está oculto durante el examen.",
@@ -734,7 +734,7 @@ const TXT = {
     answer: "Câu trả lời", answerIs: "Đáp án đúng:", explTitle: "Cách tìm đáp án", whyTitle: "Tại sao",
     testIntro: "Kiểm tra: trả lời đúng một câu ngay lần đầu để đạt.", pass: "Đúng ngay lần đầu. Em đã đạt!",
     newTest: "Làm bài kiểm tra mới", testMiss: "Câu đó không tính. Thử câu khác nhé.",
-    easyOff: "Bài kiểm tra trộn ngẫu nhiên câu hỏi mức Vừa và Khó.",
+    easyOff: "Bài kiểm tra chỉ dùng câu hỏi mức Vừa.",
     tapHint: "Chạm vào đồ thị để đặt dấu. Em có thể di chuyển dấu. Sau đó bấm Kiểm tra.",
     time: "Thời gian (năm)", year: "Năm", popSize: "Kích thước quần thể (N)", modelNote: "Dữ liệu mô hình (đơn giản hóa) để luyện tập.",
     keyTitle: "Từ vựng", keyOff: "Phần từ vựng bị ẩn trong bài kiểm tra.",
@@ -1670,7 +1670,7 @@ const GENERATORS = { bide: genBide, curves: genCurves, k: genK, pp: genPP, lf: g
 // ======================================================================
 function newQuestion() {
   stopSim();
-  if (state.mode === "test") state.level = Math.random() < 0.5 ? "medium" : "hard";   // tests mix Medium and Hard
+  if (state.mode === "test") state.level = "medium";   // Jaime: tests use Medium only
   const q = GENERATORS[state.topic]();
   Object.assign(q, { tries: 0, done: false, solved: false, firstTry: null, picks: [], tap: null, feedback: null });
   state.q = q;
