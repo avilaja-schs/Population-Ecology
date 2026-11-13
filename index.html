@@ -56,8 +56,8 @@ h1 { font-size: clamp(1.6rem, 3.5vw, 2.2rem); margin: 0; letter-spacing: -0.02em
 .tagline { margin: 6px 0 0; color: var(--muted); max-width: 70ch; }
 
 /* ---------- Topic buttons ---------- */
-.topics { grid-area: topics; display: grid; gap: 8px; grid-template-columns: repeat(6, minmax(0, 1fr)); }
-@media (max-width: 1100px) { .topics { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+.topics { grid-area: topics; display: grid; gap: 8px; grid-template-columns: repeat(4, minmax(0, 1fr)); }
+@media (max-width: 1100px) { .topics { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 .topic { border: 2px solid var(--line); background: var(--surface); color: var(--ink); font: inherit; font-weight: 500;
   border-radius: var(--radius); padding: 10px 12px; cursor: pointer; text-align: left; display: flex; flex-direction: column; gap: 2px; min-height: 64px; }
 .topic small { color: var(--muted); font-weight: 400; font-size: 0.8rem; line-height: 1.3; }
@@ -86,6 +86,13 @@ button:focus-visible, input:focus-visible, [tabindex]:focus-visible { outline: 3
 main { grid-area: main; display: flex; flex-direction: column; gap: 14px; min-width: 0; }
 .banner { background: var(--chip); border-radius: var(--radius); padding: 10px 14px; font-weight: 500; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
 .banner.win { background: var(--good-bg); color: var(--good); }
+.banner.lost { background: var(--bad-bg); color: var(--bad); }
+/* round of 3 progress: empty = not yet, ring = current, green = right, red = wrong */
+.rdots { display: inline-flex; gap: 6px; }
+.rdot { width: 16px; height: 16px; border-radius: 50%; border: 2px solid var(--muted); background: transparent; }
+.rdot.now { border-color: var(--accent); border-width: 3px; }
+.rdot.ok { background: var(--good); border-color: var(--good); }
+.rdot.no { background: var(--bad); border-color: var(--bad); }
 .card { background: var(--surface); border: 2px solid var(--line); border-radius: var(--radius); padding: 16px; display: flex; flex-direction: column; gap: 12px; min-width: 0; }
 .card.solved { border-color: var(--good); }
 .card.flash { animation: flash 0.6s; }
@@ -281,12 +288,16 @@ const TXT = {
       k: ["Carrying capacity", "K, overshoot, and changes to K"],
       pp: ["Predator and prey", "Graph questions + simulation"],
       lf: ["Limiting factors", "Density-dependent or independent"],
+      limits: ["Limits to growth", "Carrying capacity, predator and prey, limiting factors"],
     },
     correct: "Correct!", wrongTry: "Not quite. Try again.", wrongShown: "Not quite. Here is how to get the answer.",
     needNum: "Type a number first.", needTap: "Tap the graph first to place your marker.", needPick: "Pick an answer.",
     answer: "Your answer", answerIs: "Correct answer:", explTitle: "How to get the answer", whyTitle: "Why",
     testIntro: "Test: get one question right on the first try to pass.", pass: "Right on the first try. You passed!",
-    newTest: "Start a new test", testMiss: "That one did not count. Try another one.",
+    newTest: "Start a new test",
+    roundOf: "Question {n} of 3", newRound: "New set of 3", roundScore: "You got {n} of 3 right on the first try.",
+    testIntro3: "Test: 3 questions, one each on carrying capacity, predator and prey, and limiting factors. Get all 3 right to pass.",
+    testOver: "One answer was wrong, so this test is over. Start a new test and try again.", pass3: "All 3 right. You passed!", testMiss: "That one did not count. Try another one.",
     easyOff: "Tests use Medium questions only.",
     tapHint: "Tap the graph to place your marker. You can move it. Then press Check.",
     time: "Time (years)", year: "Year", popSize: "Population size (N)", modelNote: "Model data (simplified) for practice.",
@@ -508,12 +519,16 @@ const TXT = {
       k: ["Capacidad de carga", "K, exceso y cambios en K"],
       pp: ["Depredador y presa", "Preguntas de gráficas + simulación"],
       lf: ["Factores limitantes", "Dependientes o independientes de la densidad"],
+      limits: ["Límites del crecimiento", "Capacidad de carga, depredador y presa, factores limitantes"],
     },
     correct: "¡Correcto!", wrongTry: "Casi. Inténtalo otra vez.", wrongShown: "Casi. Así se obtiene la respuesta.",
     needNum: "Primero escribe un número.", needTap: "Primero toca la gráfica para poner tu marca.", needPick: "Elige una respuesta.",
     answer: "Tu respuesta", answerIs: "Respuesta correcta:", explTitle: "Cómo obtener la respuesta", whyTitle: "Por qué",
     testIntro: "Examen: contesta una pregunta bien al primer intento para aprobar.", pass: "¡Correcto al primer intento! ¡Aprobaste!",
-    newTest: "Empezar un nuevo examen", testMiss: "Esa no contó. Intenta otra.",
+    newTest: "Empezar un nuevo examen",
+    roundOf: "Pregunta {n} de 3", newRound: "Nuevo grupo de 3", roundScore: "Contestaste {n} de 3 bien al primer intento.",
+    testIntro3: "Examen: 3 preguntas, una de capacidad de carga, una de depredador y presa y una de factores limitantes. Contesta las 3 bien para aprobar.",
+    testOver: "Una respuesta estuvo mal, así que este examen terminó. Empieza un nuevo examen e inténtalo otra vez.", pass3: "¡Las 3 correctas! ¡Aprobaste!", testMiss: "Esa no contó. Intenta otra.",
     easyOff: "Los exámenes usan solo preguntas de nivel Medio.",
     tapHint: "Toca la gráfica para poner tu marca. Puedes moverla. Luego presiona Revisar.",
     time: "Tiempo (años)", year: "Año", popSize: "Tamaño de la población (N)", modelNote: "Datos de un modelo (simplificado) para practicar.",
@@ -728,12 +743,16 @@ const TXT = {
       k: ["Sức chứa môi trường", "K, vượt ngưỡng và thay đổi K"],
       pp: ["Vật săn mồi và con mồi", "Câu hỏi đồ thị + mô phỏng"],
       lf: ["Nhân tố giới hạn", "Phụ thuộc hay không phụ thuộc mật độ"],
+      limits: ["Giới hạn tăng trưởng", "Sức chứa môi trường, vật săn mồi và con mồi, nhân tố giới hạn"],
     },
     correct: "Đúng rồi!", wrongTry: "Chưa đúng. Thử lại nhé.", wrongShown: "Chưa đúng. Đây là cách tìm đáp án.",
     needNum: "Hãy nhập một số trước.", needTap: "Hãy chạm vào đồ thị để đặt dấu trước.", needPick: "Hãy chọn một đáp án.",
     answer: "Câu trả lời", answerIs: "Đáp án đúng:", explTitle: "Cách tìm đáp án", whyTitle: "Tại sao",
     testIntro: "Kiểm tra: trả lời đúng một câu ngay lần đầu để đạt.", pass: "Đúng ngay lần đầu. Em đã đạt!",
-    newTest: "Làm bài kiểm tra mới", testMiss: "Câu đó không tính. Thử câu khác nhé.",
+    newTest: "Làm bài kiểm tra mới",
+    roundOf: "Câu {n} trên 3", newRound: "Bộ 3 câu mới", roundScore: "Em trả lời đúng {n} trên 3 câu ngay lần đầu.",
+    testIntro3: "Kiểm tra: 3 câu hỏi, mỗi câu về sức chứa môi trường, vật săn mồi và con mồi, và nhân tố giới hạn. Đúng cả 3 câu để đạt.",
+    testOver: "Có một câu sai, nên bài kiểm tra này đã kết thúc. Hãy làm bài kiểm tra mới và thử lại.", pass3: "Đúng cả 3 câu. Em đã đạt!", testMiss: "Câu đó không tính. Thử câu khác nhé.",
     easyOff: "Bài kiểm tra chỉ dùng câu hỏi mức Vừa.",
     tapHint: "Chạm vào đồ thị để đặt dấu. Em có thể di chuyển dấu. Sau đó bấm Kiểm tra.",
     time: "Thời gian (năm)", year: "Năm", popSize: "Kích thước quần thể (N)", modelNote: "Dữ liệu mô hình (đơn giản hóa) để luyện tập.",
@@ -1091,12 +1110,14 @@ const shuffle = (arr) => { const a = arr.slice(); for (let i = a.length - 1; i >
 const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 const store = { get(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }, set(k, v) { try { localStorage.setItem(k, v); } catch (e) {} } };
 
-const TOPICS = ["bide", "curves", "k", "pp", "lf", "human"];
+const TOPICS = ["bide", "curves", "limits", "human"];
+// "Limits to growth" combines three question sets. Each round = 3 questions, one from each (random order).
+const LIMIT_CATS = ["k", "pp", "lf"];
 const INOUT = { en: ["IN", "OUT"], es: ["ENTRA", "SALE"], vi: ["VÀO", "RA"] };
 
 const state = {
   topic: "bide", mode: "practice", level: "easy", practiceLevel: "easy", lang: "en",
-  q: null, passed: false, showKey: true, showCalc: true, ppView: "questions", humView: "lab", lab: null, lastInputId: null,
+  q: null, round: null, passed: false, showKey: true, showCalc: true, ppView: "questions", humView: "lab", lab: null, lastInputId: null,
 };
 
 // ---------- text helpers ----------
@@ -1668,13 +1689,45 @@ const GENERATORS = { bide: genBide, curves: genCurves, k: genK, pp: genPP, lf: g
 // ======================================================================
 // RENDERING
 // ======================================================================
+function makeQuestion(gen) {
+  const q = GENERATORS[gen]();
+  Object.assign(q, { tries: 0, done: false, solved: false, firstTry: null, picks: [], tap: null, feedback: null });
+  return q;
+}
+// Start a new question. For "Limits to growth" this starts a new round of 3.
 function newQuestion() {
   stopSim();
   if (state.mode === "test") state.level = "medium";   // Jaime: tests use Medium only
-  const q = GENERATORS[state.topic]();
-  Object.assign(q, { tries: 0, done: false, solved: false, firstTry: null, picks: [], tap: null, feedback: null });
-  state.q = q;
+  let gen = state.topic;
+  if (state.topic === "limits") {
+    state.round = { cats: shuffle(LIMIT_CATS), idx: 0, results: [], finished: false, over: false };
+    if (state.mode === "test") state.passed = false;
+    gen = state.round.cats[0];
+  } else state.round = null;
+  state.q = makeQuestion(gen);
   render();
+}
+// Next question inside the current round of 3
+function nextInRound() {
+  const r = state.round;
+  r.idx++;
+  state.q = makeQuestion(r.cats[r.idx]);
+  render();
+  window.scrollTo({ top: $("main").offsetTop - 8 });
+}
+// Record how a round question went. Test: one wrong answer ends the round.
+function recordRound(q) {
+  const r = state.round; if (!r) return false;
+  r.results[r.idx] = !!(q.solved && q.firstTry);
+  if (state.mode === "test" && !r.results[r.idx]) { r.finished = r.over = true; return false; }
+  if (r.idx === LIMIT_CATS.length - 1) r.finished = true;
+  // pass only when all 3 were right on the first try
+  if (state.mode === "test" && r.finished && r.results.every(Boolean) && !state.passed) { state.passed = true; return true; }
+  return false;
+}
+function roundDots() {
+  const r = state.round;
+  return `<span class="rdots" aria-hidden="true">${LIMIT_CATS.map((_, i) => `<span class="rdot ${r.results[i] === true ? "ok" : r.results[i] === false ? "no" : i === r.idx ? "now" : ""}"></span>`).join("")}</span>`;
 }
 
 function renderStatic() {
@@ -1716,11 +1769,16 @@ function render() {
   renderStatic();
   const main = $("main");
   let h = "";
-  if (state.mode === "test") {
+  if (state.topic === "limits" && state.round) {
+    // round banner: progress dots + test status
+    const r = state.round, test = state.mode === "test";
+    const msg = test ? (state.passed ? T("pass3") : r.over ? T("testOver") : T("testIntro3")) : T("roundOf", { n: r.idx + 1 });
+    h += `<div class="banner ${state.passed && test ? "win" : ""} ${r.over ? "lost" : ""}">${roundDots()}<span>${esc(msg)}</span></div>`;
+  } else if (state.mode === "test") {
     h += `<div class="banner ${state.passed ? "win" : ""}">${esc(state.passed ? T("pass") : T("testIntro"))}${state.passed ? ` <button class="btn small" type="button" id="new-test">${esc(T("newTest"))}</button>` : ""}</div>`;
   }
   // Predator–prey: Questions / Simulation switch
-  if (state.topic === "pp") {
+  if (state.topic === "limits" && state.mode === "practice") {   // the simulation is practice only, so tests hide the switch
     h += `<div class="seg" id="pp-view" role="group"><button type="button" data-v="questions" aria-pressed="${state.ppView === "questions"}">${esc(T("viewQ"))}</button><button type="button" data-v="sim" aria-pressed="${state.ppView === "sim"}" ${state.mode === "test" ? "disabled" : ""}>${esc(T("viewSim"))}</button></div>`;
     if (state.ppView === "sim" && state.mode === "practice") { main.innerHTML = h + simHTML(); bindCommon(); startSimView(); return; }
   }
@@ -1738,7 +1796,7 @@ function cardHTML(q) {
   const v = q.view();
   const showSub = v.sub && !(state.mode === "test" && v.subHint);
   let h = `<article class="card${q.solved ? " solved" : ""}" id="qcard">`;
-  h += `<div class="qtag"><span>${esc(L().topics[q.topic][0])}</span><span>${esc(T(state.level))}</span></div>`;
+  h += `<div class="qtag">${state.round ? `<span>${esc(T("roundOf", { n: state.round.idx + 1 }))}</span>` : ""}<span>${esc(L().topics[q.topic][0])}</span><span>${esc(T(state.level))}</span></div>`;
   h += `<h2 class="prompt" id="q-prompt">${esc(v.prompt)}</h2>`;
   if (v.story) h += `<p class="story" id="q-story">${v.storyHTML || esc(v.story)}</p>`;
   if (showSub) h += `<p class="sub" id="q-sub">${esc(v.sub)}</p>`;
@@ -1770,10 +1828,18 @@ function cardHTML(q) {
     if (f.hint) text += " " + f.hint;
     h += `<div class="feedback ${f.cls}" role="status">${esc(text)}</div>`;
     if (q.done && !q.solved && q.kind === "num") h += `<div class="feedback info">${esc(T("answerIs"))} <span class="num">${fmt(q.correct)}</span></div>`;
-    if (q.done && !q.solved && state.mode === "test") h += `<div class="feedback info">${esc(T("testMiss"))}</div>`;
+    if (q.done && !q.solved && state.mode === "test") h += `<div class="feedback info">${esc(T(state.round ? "testOver" : "testMiss"))}</div>`;
   }
   if (q.done) h += `<div class="expl"><h3>${esc(q.solved ? T("whyTitle") : T("explTitle"))}</h3><ol>${q.explain().map((l) => `<li>${l}</li>`).join("")}</ol></div>`;
-  if (q.done) h += `<div class="next-row"><button class="btn" type="button" id="btn-next">${esc(T("next"))}</button></div>`;
+  if (q.done) {
+    const r = state.round;
+    let label = T("next");
+    if (r && r.finished) {
+      if (state.mode === "practice") h += `<div class="feedback info">${esc(T("roundScore", { n: r.results.filter(Boolean).length }))}</div>`;
+      label = state.mode === "test" ? T("newTest") : T("newRound");
+    }
+    h += `<div class="next-row"><button class="btn" type="button" id="btn-next">${esc(label)}</button></div>`;
+  }
   return h + `</article>`;
 }
 
@@ -1792,10 +1858,12 @@ function submit(value) {
     q.done = q.solved = true;
     if (q.firstTry === null) q.firstTry = true;
     let big = false;
-    if (state.mode === "test" && q.firstTry && !state.passed) { state.passed = true; big = true; }
+    if (state.round) big = recordRound(q);
+    else if (state.mode === "test" && q.firstTry && !state.passed) { state.passed = true; big = true; }
     setFeedback(q, "good", "correct");
     render();
-    confetti(big);
+    // Limits test: confetti only when all 3 are right. Everywhere else: small confetti for each correct answer.
+    if (!(state.round && state.mode === "test") || big) confetti(big);
     focusNext();
     return;
   }
@@ -1803,6 +1871,7 @@ function submit(value) {
   if (q.kind === "choice") q.picks.push(value);
   if (state.mode === "test" || q.tries >= 2) {
     q.done = true;
+    if (state.round) recordRound(q);
     setFeedback(q, "bad", "wrongShown");
     render();
     focusNext();
@@ -1840,7 +1909,8 @@ function bindCard() {
     inp.addEventListener("keydown", (e) => { if (e.key === "Enter") submit(parseNum(inp.value)); });
   }
   document.querySelectorAll(".choice[data-c]").forEach((b) => b.addEventListener("click", () => submit(b.dataset.c)));
-  const nx = $("btn-next"); if (nx) nx.addEventListener("click", newQuestion);
+  const nx = $("btn-next");
+  if (nx) nx.addEventListener("click", () => { if (state.round && !state.round.finished) nextInRound(); else { state.passed = false; newQuestion(); } });
   bindGraph();
 }
 // tap-on-graph questions
@@ -2015,7 +2085,7 @@ function calcPress(k) {
 function readAloud() {
   if (!("speechSynthesis" in window)) return;
   let text = "";
-  if (state.topic === "pp" && state.ppView === "sim" && state.mode === "practice") text = T("simIntro") + " " + T(sim.caption);
+  if (state.topic === "limits" && state.ppView === "sim" && state.mode === "practice") text = T("simIntro") + " " + T(sim.caption);
   else if (state.topic === "human" && state.humView === "lab" && state.mode === "practice") text = labReadText();
   else {
     const q = state.q, v = q.view();
@@ -2077,7 +2147,7 @@ function init() {
   $("btn-read").addEventListener("click", readAloud);
   $("btn-key").addEventListener("click", () => { state.showKey = !state.showKey; renderStatic(); });
   $("btn-calc").addEventListener("click", () => { state.showCalc = !state.showCalc; renderStatic(); });
-  $("btn-new").addEventListener("click", () => { if (state.topic === "pp" && state.ppView === "sim") { state.ppView = "questions"; } if (state.topic === "human") { state.humView = "questions"; } newQuestion(); });
+  $("btn-new").addEventListener("click", () => { if (state.topic === "limits" && state.ppView === "sim") { state.ppView = "questions"; } if (state.topic === "human") { state.humView = "questions"; } newQuestion(); });
   $("theme-btn").addEventListener("click", () => {
     const next = effectiveTheme() === "dark" ? "light" : "dark";
     document.documentElement.setAttribute("data-theme", next); store.set("pd-theme", next); updateThemeBtn();
