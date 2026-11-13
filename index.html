@@ -211,6 +211,17 @@ footer ul { margin: 6px 0 0; padding-left: 1.2em; }
 .lab-q { margin: 0; font-weight: 500; }
 .choices.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 .lab-status { margin: 0; font-weight: 500; }
+.choice.sel { border-color: var(--accent); background: var(--chip); box-shadow: inset 0 0 0 1px var(--accent); }
+.choice.sel b::before { content: "● "; color: var(--accent); }
+.step-ok { font-size: 0.85rem; font-weight: 500; color: var(--good); background: var(--good-bg); border-radius: 999px; padding: 2px 10px; margin-left: 6px; white-space: nowrap; }
+.mk { font-weight: 700; } .mk.ok { color: var(--good); } .mk.no { color: var(--bad); }
+.lab-item.wrong-item { border-left: 4px solid var(--bad); padding-left: 10px; }
+.lab-item.right-item { border-left: 4px solid var(--good); padding-left: 10px; }
+.why { color: var(--bad); }
+.lab-step.flash { animation: flash 0.6s; border-radius: var(--radius); }
+.copy-preview { display: block; max-width: 100%; border: 1px solid var(--line); border-radius: 8px; background: #fff; }
+input.cert-in { font-family: var(--font-body); width: 14em; } input.cert-in.short { width: 5em; }
+
 /* starting population, highlighted in blue */
 .startn { background: var(--start-bg); color: var(--start); font-family: var(--font-num); font-weight: 700; border-radius: 6px; padding: 0 6px; white-space: nowrap; }
 table.data tr.start-row th, table.data tr.start-row td { background: var(--start-bg); color: var(--start); }
@@ -2179,15 +2190,8 @@ const HUMAN_PROJ = [[2025, 8.2], [2050, 9.7], [2085, 10.3], [2100, 10.2]];
 // Each doubling: from a billion to b billion, year y1 to year y2
 const DOUBLINGS = [[0.5, 1, 1650, 1804], [1, 2, 1804, 1927], [2, 4, 1927, 1974], [4, 8, 1974, 2022]];
 const FACTORS = [{ id: "f1", dir: "up", em: "🌾" }, { id: "f2", dir: "up", em: "💉" }, { id: "f3", dir: "up", em: "🚰" },
-                 { id: "f4", dir: "down", em: "🦠" }, { id: "f5", dir: "down", em: "⚔️" }, { id: "f6", dir: "down", em: "🎓" }];
-// Multiple-choice items in the lab. The first option is always the correct one (display order is shuffled).
-const LAB_MC = {
-  pat: { q: "patQ", opts: ["pat0", "pat1", "pat2"], hint: "patHint", expl: "patExpl" },
-  shape: { q: "shapeQ", opts: ["shJ", "shS", "shL"], hint: "hintShape", expl: "shapeExpl" },
-  when: { q: "whenQ", opts: ["wh0", "wh1", "wh2"], hint: "hintRes", expl: "whenExpl" },
-  fut: { q: "futQ", opts: ["fu0", "fu1", "fu2"], hint: "hintFut", expl: "futExpl" },
-};
-
+                 { id: "f4", dir: "down", em: "🦠" }, { id: "f5", dir: "down", em: "⚔️" }, { id: "f6", dir: "down", em: "🎓" },
+                 { id: "f7", dir: "up", em: "🏥" }, { id: "f8", dir: "down", em: "👪" }, { id: "f9", dir: "down", em: "🌵" }];
 const HUMAN_TXT = {
   en: {
     topicsHuman: ["Human population", "Lab: graph, doubling time, the future"],
@@ -2196,8 +2200,8 @@ const HUMAN_TXT = {
     viewLab: "Lab",
     labTitle: "Human Population Growth",
     labGoal: "Goal: graph human population growth, use the graph to predict future growth, and identify factors that affect population growth.",
-    step1: "Step 1: Build the graph", step1Tip: "Type each number from the data column into the box next to it. A point appears on the graph when the number is correct.",
-    colYear: "Year", colData: "Number of people (billions)", colEntry: "Type it here",
+    step1: "Step 1: Build the graph", step1Tip: "Copy each number from the “Number of people” column into the box right next to it, exactly as you see it (for example, 0.5). You do not need to calculate anything. A point appears on the graph when the number matches.",
+    colYear: "Year", colData: "Number of people (billions)", colEntry: "Copy the number here",
     plotted: "{n} of {t} points plotted.", fillRest: "Fill in the rest for me", startOver: "Start over",
     entryWrong: "Check this number.", checkYears: "Check the number for {y}.", step1Done: "Graph complete! Now use it to answer the questions.",
     lockMsg: "Finish the graph to unlock the analysis questions.",
@@ -2271,8 +2275,8 @@ const HUMAN_TXT = {
     viewLab: "Laboratorio",
     labTitle: "Crecimiento de la población humana",
     labGoal: "Meta: hacer una gráfica del crecimiento de la población humana, usarla para predecir el crecimiento futuro e identificar factores que afectan el crecimiento de la población.",
-    step1: "Paso 1: Hacer la gráfica", step1Tip: "Escribe cada número de la columna de datos en la casilla de al lado. Aparece un punto en la gráfica cuando el número es correcto.",
-    colYear: "Año", colData: "Número de personas (miles de millones)", colEntry: "Escríbelo aquí",
+    step1: "Paso 1: Hacer la gráfica", step1Tip: "Copia cada número de la columna “Número de personas” en la casilla de al lado, tal como lo ves (por ejemplo, 0.5). No tienes que calcular nada. Aparece un punto en la gráfica cuando el número coincide.",
+    colYear: "Año", colData: "Número de personas (miles de millones)", colEntry: "Copia el número aquí",
     plotted: "{n} de {t} puntos en la gráfica.", fillRest: "Completa el resto por mí", startOver: "Empezar de nuevo",
     entryWrong: "Revisa este número.", checkYears: "Revisa el número de {y}.", step1Done: "¡Gráfica completa! Ahora úsala para contestar las preguntas.",
     lockMsg: "Termina la gráfica para desbloquear las preguntas de análisis.",
@@ -2345,8 +2349,8 @@ const HUMAN_TXT = {
     viewLab: "Thí nghiệm",
     labTitle: "Sự tăng trưởng dân số loài người",
     labGoal: "Mục tiêu: vẽ đồ thị tăng trưởng dân số loài người, dùng đồ thị để dự đoán sự tăng trưởng trong tương lai, và tìm các nhân tố ảnh hưởng đến tăng trưởng dân số.",
-    step1: "Bước 1: Vẽ đồ thị", step1Tip: "Gõ từng số trong cột dữ liệu vào ô bên cạnh. Một điểm sẽ hiện trên đồ thị khi số đó đúng.",
-    colYear: "Năm", colData: "Số người (tỷ)", colEntry: "Gõ vào đây",
+    step1: "Bước 1: Vẽ đồ thị", step1Tip: "Chép từng số trong cột “Số người” vào ô ngay bên cạnh, đúng như em thấy (ví dụ 0,5). Em không cần tính gì cả. Một điểm sẽ hiện trên đồ thị khi số khớp.",
+    colYear: "Năm", colData: "Số người (tỷ)", colEntry: "Chép số vào đây",
     plotted: "Đã vẽ {n} trên {t} điểm.", fillRest: "Điền phần còn lại giúp em", startOver: "Làm lại từ đầu",
     entryWrong: "Kiểm tra lại số này.", checkYears: "Kiểm tra lại số của năm {y}.", step1Done: "Đồ thị đã xong! Bây giờ hãy dùng nó để trả lời câu hỏi.",
     lockMsg: "Hoàn thành đồ thị để mở các câu hỏi phân tích.",
@@ -2500,52 +2504,277 @@ function genHuman() {
 GENERATORS.human = genHuman;
 
 // ======================================================================
-// LAB VIEW (practice only)
+// HUMAN POPULATION LAB (practice view of the Human population topic)
+//
+// How credit works (Jaime's rules):
+//   * Steps are done in order. Each step (2–5) is SUBMITTED as a whole.
+//   * If any answer in a step is wrong, the step shows which ones were wrong and why,
+//     then the student redoes ONLY that step with NEW randomized questions.
+//   * When all 5 steps are correct: big confetti + a 100% completion certificate they can copy.
+//   * Step 1 (typing the data) unlocks a "Copy graph" button (a picture of just the graph).
 // ======================================================================
+
+// Doubling-time questions the lab can ask (a → b billion, year y1 → year y2). Step 2 picks 4 at random.
+const DBL_POOL = [[0.5, 1, 1650, 1804], [1, 2, 1804, 1927], [2, 4, 1927, 1974], [3, 6, 1960, 1999], [4, 8, 1974, 2022]];
+
+// Multiple-choice question bank. opts[0] is always the correct one; the display order is shuffled.
+const LAB_BANK = {
+  pat:   { q: "patQ",   opts: ["pat0", "pat1", "pat2"],   expl: "patExpl" },
+  long:  { q: "longQ",  opts: ["lg0", "lg1", "lg2", "lg3"], expl: "longExpl" },
+  mean:  { q: "meanQ",  opts: ["mean0", "mean1", "mean2"], expl: "meanExpl" },
+  shape: { q: "shapeQ", opts: ["shJ", "shS", "shL"],     expl: "shapeExpl" },
+  growth:{ q: "growthQ", opts: ["expo", "logi", "gr2"],  expl: "growthExpl" },
+  when:  { q: "whenQ",  opts: ["wh0", "wh1", "wh2"],     expl: "whenExpl" },
+  flat:  { q: "flatQ",  opts: ["fl0", "fl1", "fl2"],     expl: "flatExpl" },
+  fut:   { q: "futQ",   opts: ["fu0", "fu1", "fu2"],     expl: "futExpl" },
+  peak:  { q: "peakQ",  opts: ["pk0", "pk1", "pk2"],     expl: "peakExpl" },
+  slow:  { q: "qWhySlow", opts: ["ws0", "ws1", "ws2"],   expl: "eWhySlow" },
+};
+
+const LAB_TXT = {
+  en: {
+    submitStep: "Submit Step {n}", stepPassed: "Step {n} complete ✓",
+    stepFailed: "Not all correct. Read the ones marked ✗, then try again. You will get new questions.",
+    retryStep: "Try Step {n} again (new questions)", needAll: "Answer every question in this step first.",
+    lockedStep: "Finish Step {n} to unlock this step.", stepsDone: "{n} of 5 steps complete",
+    copyGraph: "Copy graph", graphCopied: "Graph copied! Paste it into your document (Ctrl+V).",
+    copyFail: "Your browser did not allow copying. Right-click the picture below and choose “Copy image.”",
+    youChose: "You chose: {a}", youTyped: "You typed: {a}",
+    longQ: "Which doubling took the LONGEST time?", lg0: "0.5 → 1 billion", lg1: "1 → 2 billion", lg2: "2 → 4 billion", lg3: "4 → 8 billion",
+    longExpl: "0.5 → 1 billion took the longest (1650 to 1804). Back then, disease and hunger kept death rates high.",
+    meanQ: "What does a SHORTER doubling time mean?", mean0: "The population is growing faster.", mean1: "The population is growing slower.", mean2: "The population is getting smaller.",
+    meanExpl: "If the population doubles in fewer years, it is growing faster. That is what exponential growth looks like.",
+    growthQ: "What kind of growth does your graph show?", gr2: "Linear growth (the same amount added each year)",
+    growthExpl: "The line gets steeper and steeper over time, so the amount added each year keeps getting bigger. That is exponential growth.",
+    flatQ: "Why is the line almost flat before 1800?",
+    fl0: "Death rates were high (disease, hunger), so births and deaths were almost equal.", fl1: "Almost no babies were born.", fl2: "Nobody lived on Earth's continents yet.",
+    flatExpl: "Before about 1800, disease, hunger, and poor medicine kept death rates high. Births and deaths were nearly equal, so the population grew very slowly.",
+    peakQ: "According to the UN projection, about when will the world population stop growing (peak)?",
+    pk0: "In the mid-2080s", pk1: "In 2030", pk2: "Never. It will keep growing forever.",
+    peakExpl: "The UN projects a peak of about 10.3 billion in the mid-2080s, then a slow decline to about 10.2 billion by 2100.",
+    f7t: "Better care for mothers and newborn babies.", f7w: "More babies and mothers survive childbirth, so the death rate drops and growth speeds up.",
+    f8t: "Families have easier access to family planning.", f8w: "Families have fewer children, so the birth rate drops and growth slows.",
+    f9t: "A long drought makes crops fail for several years.", f9w: "Food shortages raise the death rate, which slows growth.",
+    chooseAnswer: "Choose one",
+    certReady: "All 5 steps correct! Fill in your name and period to make your certificate.",
+    certTitle: "Certificate of Completion", certName: "Your name", certPeriod: "Period",
+    certCopy: "Copy certificate", certCopied: "Certificate copied! Paste it where your teacher asked (Ctrl+V).", certNeedName: "Type your name first.",
+    certLab: "Human Population Growth Lab", cert100: "100% complete: all 5 steps correct",
+    certSteps: ["Built the graph", "Doubling time", "Shape of the graph", "Factors that affect growth", "Predicting the future"],
+    certFinished: "Finished", certPeriodLabel: "Period", certSite: "Population Detective",
+  },
+  es: {
+    submitStep: "Enviar paso {n}", stepPassed: "Paso {n} completo ✓",
+    stepFailed: "No todas son correctas. Lee las marcadas con ✗ e inténtalo otra vez. Te tocarán preguntas nuevas.",
+    retryStep: "Intentar el paso {n} otra vez (preguntas nuevas)", needAll: "Primero contesta todas las preguntas de este paso.",
+    lockedStep: "Termina el paso {n} para desbloquear este paso.", stepsDone: "{n} de 5 pasos completos",
+    copyGraph: "Copiar gráfica", graphCopied: "¡Gráfica copiada! Pégala en tu documento (Ctrl+V).",
+    copyFail: "Tu navegador no permitió copiar. Haz clic derecho en la imagen de abajo y elige “Copiar imagen”.",
+    youChose: "Elegiste: {a}", youTyped: "Escribiste: {a}",
+    longQ: "¿Qué duplicación tardó MÁS tiempo?", lg0: "0.5 → 1 mil millones", lg1: "1 → 2 mil millones", lg2: "2 → 4 mil millones", lg3: "4 → 8 mil millones",
+    longExpl: "De 0.5 a 1 mil millones fue la que más tardó (de 1650 a 1804). En esa época, las enfermedades y el hambre mantenían altas las muertes.",
+    meanQ: "¿Qué significa un tiempo de duplicación MÁS CORTO?", mean0: "La población está creciendo más rápido.", mean1: "La población está creciendo más lento.", mean2: "La población se está haciendo más pequeña.",
+    meanExpl: "Si la población se duplica en menos años, está creciendo más rápido. Así se ve el crecimiento exponencial.",
+    growthQ: "¿Qué tipo de crecimiento muestra tu gráfica?", gr2: "Crecimiento lineal (se suma la misma cantidad cada año)",
+    growthExpl: "La línea se pone cada vez más empinada, así que la cantidad que se suma cada año es cada vez mayor. Eso es crecimiento exponencial.",
+    flatQ: "¿Por qué la línea es casi plana antes de 1800?",
+    fl0: "Las muertes eran altas (enfermedades, hambre), así que nacimientos y muertes eran casi iguales.", fl1: "Casi no nacían bebés.", fl2: "Todavía nadie vivía en los continentes.",
+    flatExpl: "Antes de 1800, las enfermedades, el hambre y la falta de medicinas mantenían altas las muertes. Nacimientos y muertes eran casi iguales, así que la población crecía muy lento.",
+    peakQ: "Según la proyección de la ONU, ¿más o menos cuándo dejará de crecer la población mundial (su máximo)?",
+    pk0: "A mediados de la década de 2080", pk1: "En 2030", pk2: "Nunca. Seguirá creciendo para siempre.",
+    peakExpl: "La ONU proyecta un máximo de unos 10.3 mil millones a mediados de la década de 2080 y luego una baja lenta a unos 10.2 mil millones para 2100.",
+    f7t: "Mejor atención para las madres y los bebés recién nacidos.", f7w: "Sobreviven más bebés y madres al parto, así que bajan las muertes y el crecimiento se acelera.",
+    f8t: "Las familias tienen más acceso a la planificación familiar.", f8w: "Las familias tienen menos hijos, así que bajan los nacimientos y el crecimiento se frena.",
+    f9t: "Una sequía larga hace que las cosechas fallen por varios años.", f9w: "La falta de comida aumenta las muertes, lo que frena el crecimiento.",
+    chooseAnswer: "Elige una",
+    certReady: "¡Los 5 pasos correctos! Escribe tu nombre y periodo para hacer tu certificado.",
+    certTitle: "Certificado de finalización", certName: "Tu nombre", certPeriod: "Periodo",
+    certCopy: "Copiar certificado", certCopied: "¡Certificado copiado! Pégalo donde te pidió tu maestro (Ctrl+V).", certNeedName: "Primero escribe tu nombre.",
+    certLab: "Laboratorio: Crecimiento de la población humana", cert100: "100% completo: los 5 pasos correctos",
+    certSteps: ["Hizo la gráfica", "Tiempo de duplicación", "Forma de la gráfica", "Factores que afectan el crecimiento", "Predecir el futuro"],
+    certFinished: "Terminado", certPeriodLabel: "Periodo", certSite: "Detective de Poblaciones",
+  },
+  vi: {
+    submitStep: "Nộp bước {n}", stepPassed: "Hoàn thành bước {n} ✓",
+    stepFailed: "Chưa đúng hết. Đọc các câu có dấu ✗, rồi thử lại. Em sẽ nhận câu hỏi mới.",
+    retryStep: "Làm lại bước {n} (câu hỏi mới)", needAll: "Hãy trả lời tất cả câu hỏi trong bước này trước.",
+    lockedStep: "Hoàn thành bước {n} để mở bước này.", stepsDone: "Đã hoàn thành {n} trên 5 bước",
+    copyGraph: "Sao chép đồ thị", graphCopied: "Đã sao chép đồ thị! Dán vào tài liệu của em (Ctrl+V).",
+    copyFail: "Trình duyệt không cho sao chép. Nhấp chuột phải vào hình bên dưới và chọn “Sao chép hình ảnh”.",
+    youChose: "Em đã chọn: {a}", youTyped: "Em đã gõ: {a}",
+    longQ: "Lần tăng gấp đôi nào mất NHIỀU thời gian NHẤT?", lg0: "0,5 → 1 tỷ", lg1: "1 → 2 tỷ", lg2: "2 → 4 tỷ", lg3: "4 → 8 tỷ",
+    longExpl: "Từ 0,5 lên 1 tỷ mất nhiều thời gian nhất (từ 1650 đến 1804). Thời đó, bệnh tật và nạn đói làm tỷ lệ tử vong cao.",
+    meanQ: "Thời gian tăng gấp đôi NGẮN HƠN nghĩa là gì?", mean0: "Dân số đang tăng nhanh hơn.", mean1: "Dân số đang tăng chậm hơn.", mean2: "Dân số đang giảm.",
+    meanExpl: "Nếu dân số tăng gấp đôi trong ít năm hơn, nó đang tăng nhanh hơn. Đó là hình ảnh của tăng trưởng hàm mũ.",
+    growthQ: "Đồ thị của em cho thấy kiểu tăng trưởng nào?", gr2: "Tăng trưởng tuyến tính (mỗi năm tăng thêm cùng một lượng)",
+    growthExpl: "Đường ngày càng dốc, nên lượng tăng thêm mỗi năm ngày càng lớn. Đó là tăng trưởng hàm mũ.",
+    flatQ: "Tại sao đường gần như phẳng trước năm 1800?",
+    fl0: "Tỷ lệ tử vong cao (bệnh tật, nạn đói), nên số sinh và số chết gần bằng nhau.", fl1: "Gần như không có em bé nào được sinh ra.", fl2: "Chưa có ai sống trên các châu lục.",
+    flatExpl: "Trước khoảng năm 1800, bệnh tật, nạn đói và thiếu thuốc men làm tỷ lệ tử vong cao. Số sinh và số chết gần bằng nhau, nên dân số tăng rất chậm.",
+    peakQ: "Theo dự báo của Liên Hợp Quốc, khoảng khi nào dân số thế giới sẽ ngừng tăng (đạt đỉnh)?",
+    pk0: "Vào giữa thập niên 2080", pk1: "Vào năm 2030", pk2: "Không bao giờ. Nó sẽ tăng mãi mãi.",
+    peakExpl: "Liên Hợp Quốc dự báo đỉnh khoảng 10,3 tỷ vào giữa thập niên 2080, rồi giảm chậm còn khoảng 10,2 tỷ vào năm 2100.",
+    f7t: "Chăm sóc tốt hơn cho bà mẹ và trẻ sơ sinh.", f7w: "Nhiều em bé và bà mẹ sống sót khi sinh hơn, nên tỷ lệ tử vong giảm và dân số tăng nhanh hơn.",
+    f8t: "Các gia đình dễ tiếp cận kế hoạch hóa gia đình hơn.", f8w: "Các gia đình sinh ít con hơn, nên tỷ lệ sinh giảm và tăng trưởng chậm lại.",
+    f9t: "Một đợt hạn hán dài làm mùa màng thất bát nhiều năm.", f9w: "Thiếu lương thực làm tăng tỷ lệ tử vong, nên tăng trưởng chậm lại.",
+    chooseAnswer: "Chọn một",
+    certReady: "Đúng cả 5 bước! Điền tên và tiết học của em để tạo giấy chứng nhận.",
+    certTitle: "Giấy chứng nhận hoàn thành", certName: "Tên của em", certPeriod: "Tiết",
+    certCopy: "Sao chép giấy chứng nhận", certCopied: "Đã sao chép giấy chứng nhận! Dán vào nơi thầy cô yêu cầu (Ctrl+V).", certNeedName: "Hãy gõ tên của em trước.",
+    certLab: "Thí nghiệm: Sự tăng trưởng dân số loài người", cert100: "Hoàn thành 100%: đúng cả 5 bước",
+    certSteps: ["Vẽ đồ thị", "Thời gian tăng gấp đôi", "Hình dạng đồ thị", "Các nhân tố ảnh hưởng đến tăng trưởng", "Dự đoán tương lai"],
+    certFinished: "Hoàn thành", certPeriodLabel: "Tiết", certSite: "Thám Tử Quần Thể",
+  },
+};
+for (const lg of Object.keys(LAB_TXT)) Object.assign(TXT[lg], LAB_TXT[lg]);
+
+// ---------------- lab state ----------------
+// state.lab = { entries, bad, steps: {2..5: step}, pred, finishedAt, name, period, graphMsg, certMsg }
+// step = { items: [...], answers: {id: value}, status: "open" | "review" | "passed", wrong: [ids] }
 function newLab() {
-  const order = {};
-  for (const k of Object.keys(LAB_MC)) order[k] = shuffle(LAB_MC[k].opts);
-  return { entries: {}, bad: {}, items: {}, order, hl: null, pred: null, celebrated: false, wasDone: false };
+  const lab = { entries: {}, bad: {}, steps: {}, pred: null, finishedAt: null, name: "", period: "", graphMsg: null, certMsg: null, predVal: "", predHint: "" };
+  for (const n of [2, 3, 4, 5]) lab.steps[n] = { items: genStepItems(n), answers: {}, status: "open", wrong: [] };
+  return lab;
 }
-const labItem = (id) => (state.lab.items[id] = state.lab.items[id] || { tries: 0, done: false, ok: false, picks: [], val: "", hint: "" });
+const mcItem = (bankId) => ({ kind: "mc", id: bankId, bank: bankId, order: shuffle(LAB_BANK[bankId].opts), correct: LAB_BANK[bankId].opts[0] });
+// New random questions for one step (called on start and on every retry)
+function genStepItems(n) {
+  if (n === 2) {
+    const dbl = shuffle(DBL_POOL).slice(0, 4).map((d, i) => ({ kind: "num", id: "d" + i, d }));
+    return [...dbl, mcItem(pick(["pat", "long", "mean"]))];
+  }
+  if (n === 3) return shuffle([mcItem(pick(["shape", "growth"])), mcItem(pick(["when", "flat"]))]);
+  if (n === 4) {
+    // 4 factors, always at least one that speeds growth up and one that slows it down
+    let fs; do { fs = shuffle(FACTORS).slice(0, 4); } while (!fs.some((f) => f.dir === "up") || !fs.some((f) => f.dir === "down"));
+    return fs.map((f) => ({ kind: "factor", id: f.id, f, correct: f.dir }));
+  }
+  return shuffle(["fut", "peak", "slow"]).slice(0, 2).map(mcItem);
+}
 const entryOk = (y) => { const d = HUMAN_DATA.find((r) => r[0] === y); const v = parseNum(state.lab.entries[y] || ""); return v !== null && Math.abs(v - d[1]) < 1e-9; };
 const graphDone = () => HUMAN_DATA.every(([y]) => entryOk(y));
-function labDoneAll() {
-  const it = state.lab.items;
-  const ids = ["d0", "d1", "d2", "d3", "pat", "shape", "when", ...FACTORS.map((f) => f.id), "fut"];
-  return state.lab.pred !== null && ids.every((id) => it[id] && it[id].done);
+const stepPassed = (n) => (n === 1 ? graphDone() : state.lab.steps[n].status === "passed");
+const stepsDoneCount = () => [1, 2, 3, 4, 5].filter(stepPassed).length;
+const labDoneAll = () => stepsDoneCount() === 5;
+
+function itemCorrect(it, val) {
+  if (it.kind === "num") { const v = parseNum(val || ""); return v !== null && Math.abs(v - (it.d[3] - it.d[2])) <= 1; }
+  return val === it.correct;
+}
+function itemPrompt(it) {
+  if (it.kind === "num") return T("dblQ", { a: bil(it.d[0]), b: bil(it.d[1]) });
+  if (it.kind === "factor") return T(it.f.id + "t");
+  return T(LAB_BANK[it.bank].q);
+}
+const optLabel = (it, o) => (it.kind === "factor" ? T(o === "up" ? "fUp" : "fDown") : T(o));
+// The "why" shown for a wrong item. Doubling questions get the method, not the number, since they can come back.
+function itemWhy(it) {
+  if (it.kind === "num") return T("dblHint", { a: bil(it.d[0]), b: bil(it.d[1]) });
+  if (it.kind === "factor") return T(it.f.id + "w");
+  return T(LAB_BANK[it.bank].expl);
 }
 
-function labSpec() {
+// ---------------- graph pieces ----------------
+function labSpec(forExport) {
   const lab = state.lab;
   const pts = HUMAN_DATA.filter(([y]) => entryOk(y));
   const series = [{ pts, color: "--accent", dots: true, width: 3 }];
-  if (lab.pred !== null) series.push({ pts: HUMAN_PROJ, color: "--cover", dash: "8 6", dots: true, width: 3, label: T("projLabel") });
-  return { xMin: 1600, xMax: 2100, xStep: 50, yMax: 11, xLabel: T("year"), yLabel: T("yBillions"), series, shade: lab.hl ? [lab.hl] : null,
-    aria: T("labTitle") };
+  if (lab.pred !== null && !forExport) series.push({ pts: HUMAN_PROJ, color: "--cover", dash: "8 6", dots: true, width: 3, label: T("projLabel") });
+  return { xMin: 1600, xMax: forExport ? 2050 : 2100, xStep: 50, yMax: forExport ? 9 : 11, xLabel: T("year"), yLabel: T("yBillions"), series, aria: T("labTitle") };
 }
-function labGraphHTML() { return drawGraph(labSpec(), {}) + `<p class="graph-note">${esc(T("dataNote"))}</p>`; }
+function labGraphHTML() { return drawGraph(labSpec(false), {}) + `<p class="graph-note">${esc(T("dataNote"))}</p>`; }
 
-// Feedback + explanation block under one lab item
-function itemFeedback(it, explain) {
-  let h = "";
-  if (it.done) h += `<div class="feedback ${it.ok ? "good" : "bad"}">${esc(it.ok ? T("correct") : T("wrongShown"))}</div><p class="sub">${explain}</p>`;
-  else if (it.hint) h += `<div class="feedback bad">${esc(T("wrongTry") + " " + it.hint)}</div>`;
-  return h;
+// ---------------- pictures to copy (graph + certificate) ----------------
+// Light colors used in copied pictures, so they look right pasted into a white document.
+const EXPORT_COLORS = { "--surface": "#ffffff", "--grid": "#dbe7ea", "--muted": "#557481", "--ink": "#10303b", "--accent": "#0a7584", "--cover": "#f4a23c" };
+function graphCanvas() {
+  let svg = drawGraph(labSpec(true), {});
+  svg = svg.replace(/var\((--[\w-]+)\)/g, (m, v) => EXPORT_COLORS[v] || "#10303b")
+    .replace(`viewBox="0 0 ${G.W} ${G.H}"`, `viewBox="0 -28 ${G.W} ${G.H + 28}"`)   // room for the title above the graph
+    .replace("<svg ", `<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="${2 * (G.H + 28)}" `)
+    .replace(/<rect id="graph-hit"[^>]*>/, "");
+  const title = `<text x="320" y="-6" text-anchor="middle" font-size="15" font-weight="700" fill="#10303b">${esc(T("labTitle"))}</text>`;
+  svg = svg.replace(/(<svg[^>]*>)/, `$1<style>text{font-family:Arial,Helvetica,sans-serif}</style><rect x="0" y="-28" width="${G.W}" height="${G.H + 28}" fill="#ffffff"/>${title}`);
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => { const c = document.createElement("canvas"); c.width = 1280; c.height = 2 * (G.H + 28); const ctx = c.getContext("2d"); ctx.fillStyle = "#fff"; ctx.fillRect(0, 0, c.width, c.height); ctx.drawImage(img, 0, 0, c.width, c.height); resolve(c); };
+    img.onerror = reject;
+    img.src = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svg);
+  });
 }
-function mcItemHTML(id) {
-  const m = LAB_MC[id], it = labItem(id);
-  const btns = state.lab.order[id].map((c) => {
-    let cls = "choice"; if (it.picks.includes(c)) cls += " wrong"; if (it.done && c === m.opts[0]) cls += " right";
-    return `<button type="button" class="${cls}" data-item="${id}" data-c="${c}" ${it.done ? "disabled" : ""}><b>${esc(T(c))}</b></button>`;
-  }).join("");
-  return `<div class="lab-item"><p class="lab-q">${esc(T(m.q))}</p><div class="choices">${btns}</div>${itemFeedback(it, esc(T(m.expl)))}</div>`;
+function certCanvas() {
+  const lab = state.lab, W = 1600, H = 1000, c = document.createElement("canvas");
+  c.width = W; c.height = H;
+  const ctx = c.getContext("2d"), font = (w, s) => `${w} ${s}px Lexend, "Segoe UI", Arial, sans-serif`;
+  ctx.fillStyle = "#ffffff"; ctx.fillRect(0, 0, W, H);
+  ctx.strokeStyle = "#0a7584"; ctx.lineWidth = 14; ctx.strokeRect(30, 30, W - 60, H - 60);
+  ctx.strokeStyle = "#f4a23c"; ctx.lineWidth = 4; ctx.strokeRect(58, 58, W - 116, H - 116);
+  ctx.textAlign = "center"; ctx.fillStyle = "#0a7584"; ctx.font = font(700, 70); ctx.fillText(T("certTitle"), W / 2, 185);
+  ctx.fillStyle = "#557481"; ctx.font = font(500, 36); ctx.fillText(T("certLab"), W / 2, 250);
+  ctx.fillStyle = "#10303b"; ctx.font = font(700, 76); ctx.fillText(lab.name || "—", W / 2, 375, W - 240);
+  ctx.strokeStyle = "#c6d9de"; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(360, 400); ctx.lineTo(W - 360, 400); ctx.stroke();
+  ctx.fillStyle = "#557481"; ctx.font = font(500, 34);
+  ctx.fillText(`${T("certPeriodLabel")}: ${lab.period || "—"}   ·   ${T("certFinished")}: ${lab.finishedAt ? lab.finishedAt.toLocaleString(locale(), { dateStyle: "medium", timeStyle: "short" }) : ""}`, W / 2, 460);
+  // big 100% badge
+  ctx.fillStyle = "#1d7f47"; ctx.font = font(700, 46); ctx.fillText(T("cert100"), W / 2, 545);
+  // checklist of the 5 steps
+  ctx.textAlign = "left"; ctx.font = font(500, 34);
+  T("certSteps").forEach((s, i) => { const y = 620 + i * 54; ctx.fillStyle = "#1d7f47"; ctx.fillText("✓", 540, y); ctx.fillStyle = "#10303b"; ctx.fillText(`${i + 1}. ${s}`, 590, y); });
+  ctx.textAlign = "center"; ctx.fillStyle = "#557481"; ctx.font = font(500, 28); ctx.fillText(T("certSite"), W / 2, H - 92);
+  return c;
+}
+// Copy a canvas to the clipboard as a picture. If the browser refuses, show the picture so it can be right-clicked.
+function copyCanvas(canvasOrPromise, msgKey, okKey, previewId) {
+  const lab = state.lab;
+  const show = (key, url) => {
+    lab[msgKey] = { key, url };
+    const box = $(previewId); if (!box) return;
+    box.innerHTML = `<div class="feedback ${key === okKey ? "good" : "info"}" role="status">${esc(T(key))}</div>` + (url ? `<img class="copy-preview" alt="${esc(T(key === okKey ? okKey : "copyFail"))}" src="${url}">` : "");
+  };
+  const canvasP = Promise.resolve(canvasOrPromise);
+  const blobP = canvasP.then((c) => new Promise((res) => c.toBlob(res, "image/png")));
+  try {
+    // ClipboardItem gets a promise so the copy still counts as part of the click
+    navigator.clipboard.write([new ClipboardItem({ "image/png": blobP })])
+      .then(() => canvasP.then((c) => show(okKey, msgKey === "certMsg" ? c.toDataURL("image/png") : null)))
+      .catch(() => canvasP.then((c) => show("copyFail", c.toDataURL("image/png"))));
+  } catch (e) { canvasP.then((c) => show("copyFail", c.toDataURL("image/png"))); }
+}
+
+// ---------------- rendering ----------------
+function stepHead(n, titleKey) {
+  const passed = stepPassed(n);
+  return `<h3>${esc(T(titleKey))}${passed ? ` <span class="step-ok">${esc(T("stepPassed", { n }))}</span>` : ""}</h3>`;
+}
+function itemHTML(n, it) {
+  const st = state.lab.steps[n], val = st.answers[it.id], locked = st.status !== "open";
+  const isWrong = st.status === "review" && st.wrong.includes(it.id), isRight = st.status !== "open" && !isWrong;
+  let h = `<div class="lab-item ${isWrong ? "wrong-item" : isRight ? "right-item" : ""}">`;
+  const mark = isWrong ? `<span class="mk no" aria-label="wrong">✗</span> ` : isRight ? `<span class="mk ok" aria-label="correct">✓</span> ` : "";
+  if (it.kind === "num") {
+    h += `<label class="lab-q" for="i-${n}-${it.id}">${mark}${esc(itemPrompt(it))}</label>
+      <div class="answer-row"><input class="numin" id="i-${n}-${it.id}" data-step="${n}" data-item="${it.id}" type="text" inputmode="numeric" autocomplete="off" value="${esc(val || "")}" ${locked ? "disabled" : ""}><span>${esc(T("years"))}</span></div>`;
+  } else {
+    const opts = it.kind === "factor" ? ["up", "down"] : it.order;
+    h += `<p class="lab-q">${mark}${it.kind === "factor" ? `<span aria-hidden="true">${it.f.em}</span> ` : ""}${esc(itemPrompt(it))}</p>
+      <div class="choices ${it.kind === "factor" ? "two" : ""}" role="radiogroup" aria-label="${esc(T("chooseAnswer"))}">` +
+      opts.map((o) => `<button type="button" class="choice${val === o ? " sel" : ""}" role="radio" aria-checked="${val === o}" data-step="${n}" data-item="${it.id}" data-c="${o}" ${locked ? "disabled" : ""}><b>${esc(optLabel(it, o))}</b></button>`).join("") + `</div>`;
+  }
+  if (isWrong) h += `<p class="sub why">${esc(itemWhy(it))}</p>`;
+  return h + `</div>`;
+}
+function stepBody(n) {
+  const st = state.lab.steps[n];
+  let h = st.items.map((it) => itemHTML(n, it)).join("");
+  if (st.status === "open") h += `<div class="next-row"><button class="btn" type="button" data-submit="${n}">${esc(T("submitStep", { n }))}</button></div>${st.msg ? `<div class="feedback bad" role="status">${esc(T(st.msg))}</div>` : ""}`;
+  else if (st.status === "review") h += `<div class="feedback bad" role="status">${esc(T("stepFailed"))}</div><div class="next-row"><button class="btn" type="button" data-retry="${n}">${esc(T("retryStep", { n }))}</button></div>`;
+  return h;
 }
 
 function labHTML() {
-  const lab = state.lab, done = graphDone();
+  const lab = state.lab, done1 = graphDone();
   let h = `<article class="card" id="labcard">
-    <div class="qtag"><span>${esc(L().topics.human[0])}</span><span>${esc(T("viewLab"))}</span></div>
+    <div class="qtag"><span>${esc(L().topics.human[0])}</span><span>${esc(T("viewLab"))}</span><span>${esc(T("stepsDone", { n: stepsDoneCount() }))}</span></div>
     <h2 class="prompt">${esc(T("labTitle"))}</h2><p class="sub">${esc(T("labGoal"))}</p>`;
   // Step 1: build the graph
   const rows = HUMAN_DATA.map(([y, v]) => {
@@ -2554,47 +2783,43 @@ function labHTML() {
       <td><input class="numin entry" id="e-${y}" data-year="${y}" type="text" inputmode="decimal" autocomplete="off" aria-label="${y}: ${esc(T("colData"))}" value="${esc(lab.entries[y] || "")}"></td>
       <td class="mark" aria-live="polite" title="${bad ? esc(T("entryWrong")) : ""}">${ok ? "✓" : bad ? "✗" : ""}</td></tr>`;
   }).join("");
-  const n = HUMAN_DATA.filter(([y]) => entryOk(y)).length;
-  h += `<section class="lab-step"><h3>${esc(T("step1"))}</h3><p class="sub">${esc(T("step1Tip"))}</p>
+  const n1 = HUMAN_DATA.filter(([y]) => entryOk(y)).length;
+  h += `<section class="lab-step">${stepHead(1, "step1")}<p class="sub">${esc(T("step1Tip"))}</p>
     <div class="lab-grid"><div class="tbl-wrap"><table class="data lab-table"><thead><tr><th>${esc(T("colYear"))}</th><th>${esc(T("colData"))}</th><th>${esc(T("colEntry"))}</th><th></th></tr></thead><tbody>${rows}</tbody></table></div>
     <div class="graph-wrap" id="lab-graph">${labGraphHTML()}</div></div>
-    <p class="lab-status" id="lab-status">${esc(done ? T("step1Done") : T("plotted", { n, t: HUMAN_DATA.length }))}</p>
-    <div class="next-row">${done ? "" : `<button class="btn ghost small" type="button" id="lab-fill">${esc(T("fillRest"))}</button>`}<button class="btn ghost small" type="button" id="lab-reset">${esc(T("startOver"))}</button></div></section>`;
-  if (!done) return h + `<div class="feedback info">${esc(T("lockMsg"))}</div></article>`;
-
-  // Step 2: doubling times
-  h += `<section class="lab-step"><h3>${esc(T("step2"))}</h3><p class="sub">${esc(T("step2Intro"))}</p>`;
-  DOUBLINGS.forEach(([a, b, y1, y2], i) => {
-    const id = "d" + i, it = labItem(id);
-    h += `<div class="lab-item"><label class="lab-q" for="i-${id}">${esc(T("dblQ", { a: bil(a), b: bil(b) }))}</label>
-      <div class="answer-row"><input class="numin" id="i-${id}" data-num="${id}" type="text" inputmode="numeric" autocomplete="off" value="${esc(it.val)}" ${it.done ? "disabled" : ""}><span>${esc(T("years"))}</span>
-      <button class="btn small" type="button" data-check="${id}" ${it.done ? "disabled" : ""}>${esc(T("check"))}</button></div>
-      ${itemFeedback(it, esc(T("dblExpl", { a: bil(a), b: bil(b), y1, y2, d: y2 - y1 })))}</div>`;
-  });
-  h += mcItemHTML("pat") + `</section>`;
-  // Step 3: shape
-  h += `<section class="lab-step"><h3>${esc(T("step3"))}</h3>${mcItemHTML("shape")}${mcItemHTML("when")}</section>`;
-  // Step 4: factors
-  h += `<section class="lab-step"><h3>${esc(T("step4"))}</h3><p class="sub">${esc(T("step4Intro"))}</p>`;
-  FACTORS.forEach((f) => {
-    const it = labItem(f.id);
-    const btn = (dir) => { let cls = "choice"; if (it.picks.includes(dir)) cls += " wrong"; if (it.done && dir === f.dir) cls += " right"; return `<button type="button" class="${cls}" data-item="${f.id}" data-c="${dir}" ${it.done ? "disabled" : ""}><b>${esc(T(dir === "up" ? "fUp" : "fDown"))}</b></button>`; };
-    h += `<div class="lab-item factor"><p class="lab-q"><span aria-hidden="true">${f.em}</span> ${esc(T(f.id + "t"))}</p><div class="choices two">${btn("up")}${btn("down")}</div>${itemFeedback(it, esc(T(f.id + "w")))}</div>`;
-  });
-  h += `</section>`;
-  // Step 5: predict
-  const pi = labItem("pred");
-  h += `<section class="lab-step"><h3>${esc(T("step5"))}</h3><div class="lab-item"><label class="lab-q" for="i-pred">${esc(T("predQ"))}</label>
-    ${lab.pred === null ? `<p class="sub">${esc(T("predHint"))}</p>` : ""}
-    <div class="answer-row"><input class="numin" id="i-pred" data-num="pred" type="text" inputmode="decimal" autocomplete="off" value="${esc(pi.val)}" ${lab.pred !== null ? "disabled" : ""}><span>${esc(T("billionsU", { n: "" }).trim())}</span>
-    <button class="btn small" type="button" data-check="pred" ${lab.pred !== null ? "disabled" : ""}>${esc(T("check"))}</button></div>`;
-  if (pi.hint) h += `<div class="feedback bad">${esc(pi.hint)}</div>`;
-  if (lab.pred !== null) {
-    const p = lab.pred, cmp = Math.abs(p - 9.7) <= 1 ? "predClose" : p > 9.7 ? "predHigh" : "predLow";
-    h += `<div class="feedback info">${esc(T("predYou", { p: bil(p) }))} ${esc(T(cmp))}</div><p class="sub">${esc(T("predUN"))}</p></div>${mcItemHTML("fut")}`;
-  } else h += `</div>`;
-  h += `</section>`;
-  if (labDoneAll()) h += `<div class="banner win">${esc(T("labDone"))}</div>`;
+    <p class="lab-status" id="lab-status">${esc(done1 ? T("step1Done") : T("plotted", { n: n1, t: HUMAN_DATA.length }))}</p>
+    <div class="next-row">${done1 ? `<button class="btn" type="button" id="copy-graph">📋 ${esc(T("copyGraph"))}</button>` : ""}<button class="btn ghost small" type="button" id="lab-reset">${esc(T("startOver"))}</button></div>
+    <div id="graph-copy-box">${lab.graphMsg ? `<div class="feedback ${lab.graphMsg.key === "graphCopied" ? "good" : "info"}">${esc(T(lab.graphMsg.key))}</div>${lab.graphMsg.url ? `<img class="copy-preview" alt="${esc(T("labTitle"))}" src="${lab.graphMsg.url}">` : ""}` : ""}</div></section>`;
+  // Steps 2–5 (each unlocks after the one before it)
+  const titles = { 2: "step2", 3: "step3", 4: "step4", 5: "step5" };
+  for (const n of [2, 3, 4, 5]) {
+    h += `<section class="lab-step">${stepHead(n, titles[n])}`;
+    if (!stepPassed(n - 1)) { h += `<div class="feedback info">${esc(T("lockedStep", { n: n - 1 }))}</div></section>`; continue; }
+    if (n === 2) h += `<p class="sub">${esc(T("step2Intro"))}</p>`;
+    if (n === 4) h += `<p class="sub">${esc(T("step4Intro"))}</p>`;
+    if (n === 5) {
+      // prediction first (any reasonable number), then the UN projection appears and the graded questions unlock
+      h += `<div class="lab-item"><label class="lab-q" for="i-pred">${esc(T("predQ"))}</label>
+        ${lab.pred === null ? `<p class="sub">${esc(T("predHint"))}</p>` : ""}
+        <div class="answer-row"><input class="numin" id="i-pred" type="text" inputmode="decimal" autocomplete="off" value="${esc(lab.predVal)}" ${lab.pred !== null ? "disabled" : ""}><span>${esc(T("billionsU", { n: "" }).trim())}</span>
+        <button class="btn small" type="button" id="pred-check" ${lab.pred !== null ? "disabled" : ""}>${esc(T("check"))}</button></div>
+        ${lab.predHint ? `<div class="feedback bad">${esc(lab.predHint)}</div>` : ""}`;
+      if (lab.pred !== null) {
+        const p = lab.pred, cmp = Math.abs(p - 9.7) <= 1 ? "predClose" : p > 9.7 ? "predHigh" : "predLow";
+        h += `<div class="feedback info">${esc(T("predYou", { p: bil(p) }))} ${esc(T(cmp))}</div><p class="sub">${esc(T("predUN"))}</p></div>` + stepBody(5);
+      } else h += `</div>`;
+      h += `</section>`; continue;
+    }
+    h += stepBody(n) + `</section>`;
+  }
+  // Certificate
+  if (labDoneAll()) {
+    h += `<section class="lab-step cert-step"><div class="banner win">${esc(T("labDone"))}</div><p class="lab-q">${esc(T("certReady"))}</p>
+      <div class="answer-row"><label for="cert-name">${esc(T("certName"))}</label><input class="numin cert-in" id="cert-name" type="text" autocomplete="off" value="${esc(lab.name)}">
+      <label for="cert-period">${esc(T("certPeriod"))}</label><input class="numin cert-in short" id="cert-period" type="text" autocomplete="off" value="${esc(lab.period)}"></div>
+      <div class="next-row"><button class="btn" type="button" id="copy-cert">📋 ${esc(T("certCopy"))}</button></div>
+      <div id="cert-box">${lab.certMsg ? `<div class="feedback ${lab.certMsg.key === "certCopied" ? "good" : lab.certMsg.key === "certNeedName" ? "bad" : "info"}">${esc(T(lab.certMsg.key))}</div>${lab.certMsg.url ? `<img class="copy-preview" alt="${esc(T("certTitle"))}" src="${lab.certMsg.url}">` : ""}` : ""}</div></section>`;
+  }
   return h + `</article>`;
 }
 
@@ -2629,62 +2854,75 @@ function bindLab() {
       const next = inp.closest("tr").nextElementSibling; if (next) next.querySelector("input").focus();
     });
   });
-  const fill = $("lab-fill"); if (fill) fill.addEventListener("click", () => { HUMAN_DATA.forEach(([y, v]) => { if (!entryOk(y)) lab.entries[y] = String(v); }); renderLab(); });
   $("lab-reset").addEventListener("click", () => { state.lab = newLab(); renderLab(); });
-  card.querySelectorAll("input[data-num]").forEach((inp) => {
+  const cg = $("copy-graph"); if (cg) cg.addEventListener("click", () => copyCanvas(graphCanvas(), "graphMsg", "graphCopied", "graph-copy-box"));
+  // Steps 2–5: typed answers and choices are saved, then graded together on Submit
+  card.querySelectorAll("input[data-step]").forEach((inp) => {
     inp.addEventListener("focus", () => { state.lastInputId = inp.id; });
-    inp.addEventListener("input", () => { labItem(inp.dataset.num).val = inp.value; });
-    inp.addEventListener("keydown", (e) => { if (e.key === "Enter") labCheck(inp.dataset.num); });
+    inp.addEventListener("input", () => { lab.steps[inp.dataset.step].answers[inp.dataset.item] = inp.value; });
   });
-  card.querySelectorAll("[data-check]").forEach((b) => b.addEventListener("click", () => labCheck(b.dataset.check)));
-  card.querySelectorAll(".choice[data-item]").forEach((b) => b.addEventListener("click", () => labPick(b.dataset.item, b.dataset.c)));
+  card.querySelectorAll(".choice[data-step]").forEach((b) => b.addEventListener("click", () => {
+    const st = lab.steps[b.dataset.step]; if (st.status !== "open") return;
+    st.answers[b.dataset.item] = b.dataset.c; st.msg = null;
+    b.parentElement.querySelectorAll(".choice").forEach((x) => { const on = x === b; x.classList.toggle("sel", on); x.setAttribute("aria-checked", on); });
+  }));
+  card.querySelectorAll("[data-submit]").forEach((b) => b.addEventListener("click", () => submitStep(+b.dataset.submit)));
+  card.querySelectorAll("[data-retry]").forEach((b) => b.addEventListener("click", () => {
+    const n = +b.dataset.retry;
+    lab.steps[n] = { items: genStepItems(n), answers: {}, status: "open", wrong: [] };   // new random questions
+    renderLab();
+    const first = $("labcard").querySelectorAll(".lab-step")[n - 1]; if (first) first.scrollIntoView({ block: "start" });
+  }));
+  const pc = $("pred-check"); if (pc) pc.addEventListener("click", checkPrediction);
+  const pi = $("i-pred");
+  if (pi) { pi.addEventListener("input", () => { lab.predVal = pi.value; }); pi.addEventListener("keydown", (e) => { if (e.key === "Enter") checkPrediction(); }); pi.addEventListener("focus", () => { state.lastInputId = "i-pred"; }); }
+  const cn = $("cert-name"), cp = $("cert-period");
+  if (cn) cn.addEventListener("input", () => { lab.name = cn.value.trim(); });
+  if (cp) cp.addEventListener("input", () => { lab.period = cp.value.trim(); });
+  const cc = $("copy-cert");
+  if (cc) cc.addEventListener("click", () => {
+    if (!lab.name) { lab.certMsg = { key: "certNeedName" }; renderLab(); $("cert-name").focus(); return; }
+    copyCanvas(certCanvas(), "certMsg", "certCopied", "cert-box");
+  });
 }
 
-// Practice rule: 1st miss = hint and try again, 2nd miss = show the answer
-function labResult(it, ok, hint) {
-  it.tries++;
-  if (ok) { it.done = it.ok = true; it.hint = ""; }
-  else if (it.tries >= 2) { it.done = true; it.hint = ""; }
-  else it.hint = hint;
+function checkPrediction() {
+  const lab = state.lab, v = parseNum(lab.predVal);
+  if (v === null || v < 8 || v > 30) { lab.predHint = T("predNeed"); return renderLab(); }
+  lab.predHint = ""; lab.pred = v; renderLab();
 }
-function labCheck(id) {
-  const lab = state.lab, it = labItem(id);
-  const v = parseNum(it.val);
-  if (id === "pred") {
-    if (v === null || v < 8 || v > 30) { it.hint = T("predNeed"); return renderLab(); }
-    it.hint = ""; lab.pred = v; return labAfter();
-  }
-  if (v === null) { it.hint = T("needNum"); return renderLab(); }
-  const [a, b, y1, y2] = DOUBLINGS[+id.slice(1)];
-  labResult(it, Math.abs(v - (y2 - y1)) <= 1, T("dblHint", { a: bil(a), b: bil(b) }));
-  if (it.done) lab.hl = [y1, y2];   // highlight the two years on the graph
-  labAfter(it);
-}
-function labPick(id, c) {
-  const it = labItem(id);
-  if (it.done) return;
-  const f = FACTORS.find((x) => x.id === id);
-  const correct = f ? f.dir : LAB_MC[id].opts[0];
-  const hint = f ? T("hintFactor") : T(LAB_MC[id].hint);
-  if (c !== correct) it.picks.push(c);
-  labResult(it, c === correct, hint);
-  labAfter(it);
-}
-function labAfter(it) {
+
+// Grade a whole step at once
+function submitStep(n) {
+  const lab = state.lab, st = lab.steps[n];
+  if (st.items.some((it) => (st.answers[it.id] || "").toString().trim() === "")) { st.msg = "needAll"; return renderLab(); }
+  st.msg = null;
+  st.wrong = st.items.filter((it) => !itemCorrect(it, st.answers[it.id])).map((it) => it.id);
+  st.status = st.wrong.length ? "review" : "passed";
   renderLab();
-  if (it && it.done && it.ok) confetti(false);
-  if (labDoneAll() && !state.lab.celebrated) { state.lab.celebrated = true; confetti(true); }
+  if (st.status === "passed") {
+    if (labDoneAll()) { lab.finishedAt = new Date(); renderLab(); confetti(true); }
+    else confetti(false);
+    const nextSec = $("labcard").querySelectorAll(".lab-step")[n]; if (nextSec) nextSec.scrollIntoView({ behavior: reduceMotion() ? "auto" : "smooth", block: "start" });
+  } else {
+    const card = $("labcard").querySelectorAll(".lab-step")[n - 1]; if (card) { card.classList.remove("flash"); void card.offsetWidth; card.classList.add("flash"); }
+  }
 }
+
 // Read-aloud text for the lab: the goal plus the first thing the student still needs to do
 function labReadText() {
   if (!graphDone()) return [T("labTitle"), T("labGoal"), T("step1"), T("step1Tip")].join(". ");
-  const it = state.lab.items;
-  for (let i = 0; i < 4; i++) if (!(it["d" + i] && it["d" + i].done)) { const [a, b] = DOUBLINGS[i]; return T("step2Intro") + " " + T("dblQ", { a: bil(a), b: bil(b) }); }
-  for (const id of ["pat", "shape", "when"]) if (!(it[id] && it[id].done)) return T(LAB_MC[id].q) + ". " + state.lab.order[id].map((c) => T(c)).join(". ");
-  for (const f of FACTORS) if (!(it[f.id] && it[f.id].done)) return T("step4Intro") + " " + T(f.id + "t") + ". " + T("fUp") + ". " + T("fDown");
-  if (state.lab.pred === null) return T("predQ") + " " + T("predHint");
-  if (!(it.fut && it.fut.done)) return T("predUN") + " " + T("futQ") + ". " + state.lab.order.fut.map((c) => T(c)).join(". ");
-  return T("labDone");
+  for (const n of [2, 3, 4, 5]) {
+    if (stepPassed(n)) continue;
+    if (n === 5 && state.lab.pred === null) return T("predQ") + " " + T("predHint");
+    const st = state.lab.steps[n];
+    const parts = [T("step" + n)];
+    if (n === 2) parts.push(T("step2Intro")); if (n === 4) parts.push(T("step4Intro")); if (n === 5) parts.push(T("predUN"));
+    st.items.forEach((it) => { parts.push(itemPrompt(it)); if (it.kind !== "num") parts.push((it.kind === "factor" ? ["up", "down"] : it.order).map((o) => optLabel(it, o)).join(". ")); });
+    if (st.status === "review") parts.push(T("stepFailed"));
+    return parts.join(". ");
+  }
+  return T("labDone") + " " + T("certReady");
 }
 
 init();
