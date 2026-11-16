@@ -56,8 +56,8 @@ h1 { font-size: clamp(1.6rem, 3.5vw, 2.2rem); margin: 0; letter-spacing: -0.02em
 .tagline { margin: 6px 0 0; color: var(--muted); max-width: 70ch; }
 
 /* ---------- Topic buttons ---------- */
-.topics { grid-area: topics; display: grid; gap: 8px; grid-template-columns: repeat(4, minmax(0, 1fr)); }
-@media (max-width: 1100px) { .topics { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.topics { grid-area: topics; display: grid; gap: 8px; grid-template-columns: repeat(5, minmax(0, 1fr)); }
+@media (max-width: 1100px) { .topics { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 .topic { border: 2px solid var(--line); background: var(--surface); color: var(--ink); font: inherit; font-weight: 500;
   border-radius: var(--radius); padding: 10px 12px; cursor: pointer; text-align: left; display: flex; flex-direction: column; gap: 2px; min-height: 64px; }
 .topic small { color: var(--muted); font-weight: 400; font-size: 0.8rem; line-height: 1.3; }
@@ -88,7 +88,7 @@ main { grid-area: main; display: flex; flex-direction: column; gap: 14px; min-wi
 .banner.win { background: var(--good-bg); color: var(--good); }
 .banner.lost { background: var(--bad-bg); color: var(--bad); }
 /* round of 3 progress: empty = not yet, ring = current, green = right, red = wrong */
-.rdots { display: inline-flex; gap: 6px; }
+.rdots { display: inline-flex; gap: 6px; flex-wrap: wrap; }
 .rdot { width: 16px; height: 16px; border-radius: 50%; border: 2px solid var(--muted); background: transparent; }
 .rdot.now { border-color: var(--accent); border-width: 3px; }
 .rdot.ok { background: var(--good); border-color: var(--good); }
@@ -306,7 +306,7 @@ const TXT = {
     answer: "Your answer", answerIs: "Correct answer:", explTitle: "How to get the answer", whyTitle: "Why",
     testIntro: "Test: get one question right on the first try to pass.", pass: "Right on the first try. You passed!",
     newTest: "Start a new test",
-    roundOf: "Question {n} of 3", newRound: "New set of 3", roundScore: "You got {n} of 3 right on the first try.",
+    roundOf: "Question {n} of {t}", newRound: "New set of 3", roundScore: "You got {n} of 3 right on the first try.",
     testIntro3: "Test: 3 questions, one each on carrying capacity, predator and prey, and limiting factors. Get all 3 right to pass.",
     testOver: "One answer was wrong, so this test is over. Start a new test and try again.", pass3: "All 3 right. You passed!", testMiss: "That one did not count. Try another one.",
     easyOff: "Tests use Medium questions only.",
@@ -537,7 +537,7 @@ const TXT = {
     answer: "Tu respuesta", answerIs: "Respuesta correcta:", explTitle: "Cómo obtener la respuesta", whyTitle: "Por qué",
     testIntro: "Examen: contesta una pregunta bien al primer intento para aprobar.", pass: "¡Correcto al primer intento! ¡Aprobaste!",
     newTest: "Empezar un nuevo examen",
-    roundOf: "Pregunta {n} de 3", newRound: "Nuevo grupo de 3", roundScore: "Contestaste {n} de 3 bien al primer intento.",
+    roundOf: "Pregunta {n} de {t}", newRound: "Nuevo grupo de 3", roundScore: "Contestaste {n} de 3 bien al primer intento.",
     testIntro3: "Examen: 3 preguntas, una de capacidad de carga, una de depredador y presa y una de factores limitantes. Contesta las 3 bien para aprobar.",
     testOver: "Una respuesta estuvo mal, así que este examen terminó. Empieza un nuevo examen e inténtalo otra vez.", pass3: "¡Las 3 correctas! ¡Aprobaste!", testMiss: "Esa no contó. Intenta otra.",
     easyOff: "Los exámenes usan solo preguntas de nivel Medio.",
@@ -761,7 +761,7 @@ const TXT = {
     answer: "Câu trả lời", answerIs: "Đáp án đúng:", explTitle: "Cách tìm đáp án", whyTitle: "Tại sao",
     testIntro: "Kiểm tra: trả lời đúng một câu ngay lần đầu để đạt.", pass: "Đúng ngay lần đầu. Em đã đạt!",
     newTest: "Làm bài kiểm tra mới",
-    roundOf: "Câu {n} trên 3", newRound: "Bộ 3 câu mới", roundScore: "Em trả lời đúng {n} trên 3 câu ngay lần đầu.",
+    roundOf: "Câu {n} trên {t}", newRound: "Bộ 3 câu mới", roundScore: "Em trả lời đúng {n} trên 3 câu ngay lần đầu.",
     testIntro3: "Kiểm tra: 3 câu hỏi, mỗi câu về sức chứa môi trường, vật săn mồi và con mồi, và nhân tố giới hạn. Đúng cả 3 câu để đạt.",
     testOver: "Có một câu sai, nên bài kiểm tra này đã kết thúc. Hãy làm bài kiểm tra mới và thử lại.", pass3: "Đúng cả 3 câu. Em đã đạt!", testMiss: "Câu đó không tính. Thử câu khác nhé.",
     easyOff: "Bài kiểm tra chỉ dùng câu hỏi mức Vừa.",
@@ -1121,7 +1121,7 @@ const shuffle = (arr) => { const a = arr.slice(); for (let i = a.length - 1; i >
 const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 const store = { get(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }, set(k, v) { try { localStorage.setItem(k, v); } catch (e) {} } };
 
-const TOPICS = ["bide", "curves", "limits", "human"];
+const TOPICS = ["bide", "curves", "limits", "human", "prep"];
 // "Limits to growth" combines three question sets. Each round = 3 questions, one from each (random order).
 const LIMIT_CATS = ["k", "pp", "lf"];
 const INOUT = { en: ["IN", "OUT"], es: ["ENTRA", "SALE"], vi: ["VÀO", "RA"] };
@@ -1711,8 +1711,14 @@ function newQuestion() {
   if (state.mode === "test") state.level = "medium";   // Jaime: tests use Medium only
   let gen = state.topic;
   if (state.topic === "limits") {
-    state.round = { cats: shuffle(LIMIT_CATS), idx: 0, results: [], finished: false, over: false };
+    state.round = { kind: "limits", cats: shuffle(LIMIT_CATS), idx: 0, results: [], finished: false, over: false, allowed: 0 };
     if (state.mode === "test") state.passed = false;
+    gen = state.round.cats[0];
+  } else if (state.topic === "prep") {
+    // Test prep: 12 mixed questions, always test rules (see part6_prep.js)
+    state.mode = "test"; state.passed = false;
+    state.round = makePrepRound();
+    state.level = state.round.levels[0];
     gen = state.round.cats[0];
   } else state.round = null;
   state.q = makeQuestion(gen);
@@ -1722,6 +1728,7 @@ function newQuestion() {
 function nextInRound() {
   const r = state.round;
   r.idx++;
+  if (r.levels) state.level = r.levels[r.idx];   // test prep sets a level for each question
   state.q = makeQuestion(r.cats[r.idx]);
   render();
   window.scrollTo({ top: $("main").offsetTop - 8 });
@@ -1730,15 +1737,16 @@ function nextInRound() {
 function recordRound(q) {
   const r = state.round; if (!r) return false;
   r.results[r.idx] = !!(q.solved && q.firstTry);
-  if (state.mode === "test" && !r.results[r.idx]) { r.finished = r.over = true; return false; }
-  if (r.idx === LIMIT_CATS.length - 1) r.finished = true;
-  // pass only when all 3 were right on the first try
-  if (state.mode === "test" && r.finished && r.results.every(Boolean) && !state.passed) { state.passed = true; return true; }
+  // Test: the round ends as soon as there are more wrong answers than allowed (limits: 0, test prep: 1)
+  const wrongs = r.results.filter((x) => x === false).length;
+  if (state.mode === "test" && wrongs > (r.allowed || 0)) { r.finished = r.over = true; return false; }
+  if (r.idx === r.cats.length - 1) r.finished = true;
+  if (state.mode === "test" && r.finished && !state.passed) { state.passed = true; if (r.kind === "prep") r.finishedAt = new Date(); return true; }
   return false;
 }
 function roundDots() {
   const r = state.round;
-  return `<span class="rdots" aria-hidden="true">${LIMIT_CATS.map((_, i) => `<span class="rdot ${r.results[i] === true ? "ok" : r.results[i] === false ? "no" : i === r.idx ? "now" : ""}"></span>`).join("")}</span>`;
+  return `<span class="rdots" aria-hidden="true">${r.cats.map((_, i) => `<span class="rdot ${r.results[i] === true ? "ok" : r.results[i] === false ? "no" : i === r.idx ? "now" : ""}"></span>`).join("")}</span>`;
 }
 
 function renderStatic() {
@@ -1755,13 +1763,13 @@ function renderStatic() {
   // topics
   $("topics").innerHTML = TOPICS.map((t) => `<button type="button" class="topic" data-topic="${t}" aria-pressed="${state.topic === t}">${esc(L().topics[t][0])}<small>${esc(L().topics[t][1])}</small></button>`).join("");
   // segmented buttons
-  document.querySelectorAll("#seg-mode button").forEach((b) => b.setAttribute("aria-pressed", b.dataset.mode === state.mode));
+  document.querySelectorAll("#seg-mode button").forEach((b) => { b.setAttribute("aria-pressed", b.dataset.mode === state.mode); b.disabled = state.topic === "prep" && b.dataset.mode === "practice"; });
   // Test mode: levels are picked at random (Medium or Hard) for each question, so the level buttons are locked
   const test = state.mode === "test";
   document.querySelectorAll("#seg-level button").forEach((b) => { b.setAttribute("aria-pressed", !test && b.dataset.level === state.level); b.disabled = test; b.title = test ? T("easyOff") : ""; });
   let note = $("level-note");
   if (!note) { note = document.createElement("span"); note.id = "level-note"; note.className = "muted"; $("seg-level").after(note); }
-  note.textContent = test ? T("easyOff") : ""; note.hidden = !test;
+  note.textContent = test ? T(state.topic === "prep" ? "prepLevels" : "easyOff") : ""; note.hidden = !test;
   document.querySelectorAll("#seg-lang button").forEach((b) => b.setAttribute("aria-pressed", b.dataset.lang === state.lang));
   $("btn-key").setAttribute("aria-pressed", state.showKey); $("btn-calc").setAttribute("aria-pressed", state.showCalc);
   // vocabulary key
@@ -1780,10 +1788,11 @@ function render() {
   renderStatic();
   const main = $("main");
   let h = "";
-  if (state.topic === "limits" && state.round) {
+  if (state.round) {
     // round banner: progress dots + test status
-    const r = state.round, test = state.mode === "test";
-    const msg = test ? (state.passed ? T("pass3") : r.over ? T("testOver") : T("testIntro3")) : T("roundOf", { n: r.idx + 1 });
+    const r = state.round, test = state.mode === "test", prep = r.kind === "prep";
+    const right = r.results.filter(Boolean).length;
+    const msg = test ? (state.passed ? T(prep ? "prepPass" : "pass3", { n: right }) : r.over ? T(prep ? "prepOver" : "testOver") : T(prep ? "prepIntro" : "testIntro3")) : T("roundOf", { n: r.idx + 1, t: r.cats.length });
     h += `<div class="banner ${state.passed && test ? "win" : ""} ${r.over ? "lost" : ""}">${roundDots()}<span>${esc(msg)}</span></div>`;
   } else if (state.mode === "test") {
     h += `<div class="banner ${state.passed ? "win" : ""}">${esc(state.passed ? T("pass") : T("testIntro"))}${state.passed ? ` <button class="btn small" type="button" id="new-test">${esc(T("newTest"))}</button>` : ""}</div>`;
@@ -1798,16 +1807,17 @@ function render() {
     h += `<div class="seg" id="hum-view" role="group"><button type="button" data-v="lab" aria-pressed="${state.humView === "lab"}" ${state.mode === "test" ? "disabled" : ""}>${esc(T("viewLab"))}</button><button type="button" data-v="questions" aria-pressed="${state.humView === "questions"}">${esc(T("viewQ"))}</button></div>`;
     if (state.humView === "lab" && state.mode === "practice") { if (!state.lab) state.lab = newLab(); main.innerHTML = h + labHTML(); bindCommon(); bindLab(); return; }
   }
-  main.innerHTML = h + cardHTML(state.q);
+  main.innerHTML = h + cardHTML(state.q) + (state.round && state.round.kind === "prep" && state.passed ? prepCertHTML() : "");
   bindCommon();
   bindCard();
+  bindPrepCert();
 }
 
 function cardHTML(q) {
   const v = q.view();
   const showSub = v.sub && !(state.mode === "test" && v.subHint);
   let h = `<article class="card${q.solved ? " solved" : ""}" id="qcard">`;
-  h += `<div class="qtag">${state.round ? `<span>${esc(T("roundOf", { n: state.round.idx + 1 }))}</span>` : ""}<span>${esc(L().topics[q.topic][0])}</span><span>${esc(T(state.level))}</span></div>`;
+  h += `<div class="qtag">${state.round ? `<span>${esc(T("roundOf", { n: state.round.idx + 1, t: state.round.cats.length }))}</span>` : ""}<span>${esc(L().topics[q.topic][0])}</span><span>${esc(T(state.level))}</span></div>`;
   h += `<h2 class="prompt" id="q-prompt">${esc(v.prompt)}</h2>`;
   if (v.story) h += `<p class="story" id="q-story">${v.storyHTML || esc(v.story)}</p>`;
   if (showSub) h += `<p class="sub" id="q-sub">${esc(v.sub)}</p>`;
@@ -1839,7 +1849,7 @@ function cardHTML(q) {
     if (f.hint) text += " " + f.hint;
     h += `<div class="feedback ${f.cls}" role="status">${esc(text)}</div>`;
     if (q.done && !q.solved && q.kind === "num") h += `<div class="feedback info">${esc(T("answerIs"))} <span class="num">${fmt(q.correct)}</span></div>`;
-    if (q.done && !q.solved && state.mode === "test") h += `<div class="feedback info">${esc(T(state.round ? "testOver" : "testMiss"))}</div>`;
+    if (q.done && !q.solved && state.mode === "test") h += `<div class="feedback info">${esc(T(!state.round ? "testMiss" : !state.round.over ? "prepOneMiss" : state.round.kind === "prep" ? "prepOver" : "testOver"))}</div>`;
   }
   if (q.done) h += `<div class="expl"><h3>${esc(q.solved ? T("whyTitle") : T("explTitle"))}</h3><ol>${q.explain().map((l) => `<li>${l}</li>`).join("")}</ol></div>`;
   if (q.done) {
@@ -1875,6 +1885,7 @@ function submit(value) {
     render();
     // Limits test: confetti only when all 3 are right. Everywhere else: small confetti for each correct answer.
     if (!(state.round && state.mode === "test") || big) confetti(big);
+    if (big && state.round && state.round.kind === "prep") { const c = $("prep-cert"); if (c) c.scrollIntoView({ behavior: reduceMotion() ? "auto" : "smooth", block: "start" }); }
     focusNext();
     return;
   }
@@ -2147,7 +2158,7 @@ function init() {
 
   $("topics").addEventListener("click", (e) => { const b = e.target.closest("button[data-topic]"); if (!b) return; state.topic = b.dataset.topic; newQuestion(); });
   $("seg-mode").addEventListener("click", (e) => {
-    const b = e.target.closest("button[data-mode]"); if (!b) return;
+    const b = e.target.closest("button[data-mode]"); if (!b || b.disabled) return;
     state.mode = b.dataset.mode; state.passed = false;
     if (state.mode === "test") { state.ppView = "questions"; state.humView = "questions"; }
     else state.level = state.practiceLevel;   // back to the level the student picked for practice
@@ -2923,6 +2934,131 @@ function labReadText() {
     return parts.join(". ");
   }
   return T("labDone") + " " + T("certReady");
+}
+
+// init() is called at the end of part6_prep.js
+// ======================================================================
+// TEST PREP (5th topic): 12 mixed questions + certificate
+//
+// Jaime's rules:
+//   * 12 questions from BIDE, J and S curves, carrying capacity, predator and prey,
+//     limiting factors, and human population (at most 1 human population question).
+//   * Mostly Medium, some Hard (9 Medium + 3 Hard, mixed in at random).
+//   * Test rules: one try per question. Students may miss 1 (need 11 of 12).
+//     The second wrong answer ends the try. Every new try gets new questions.
+//   * Pass → big confetti + certificate (name, period, date, score) with a Copy button.
+// ======================================================================
+const PREP_SETS = ["bide", "curves", "k", "pp", "lf"];
+const PREP_TOTAL = 12, PREP_HARD = 3, PREP_ALLOWED_MISSES = 1;
+
+const PREP_TXT = {
+  en: {
+    topicsPrep: ["Test prep", "12 mixed questions + certificate"],
+    prepIntro: "Test prep: 12 questions from every topic. You can miss 1. A second wrong answer ends this try.",
+    prepOneMiss: "That was your 1 allowed miss. Keep going, but the next wrong answer ends this try.",
+    prepOver: "That was your second wrong answer, so this try is over. Start again for new questions.",
+    prepPass: "{n} of 12 correct. You earned your Test Prep certificate!",
+    prepLevels: "Test prep: mostly Medium, some Hard.",
+    prepCertTitle: "Certificate of Completion", prepCertSub: "Population Ecology Test Prep",
+    prepScore: "Score: {n} of 12 ({p}%)", prepCovered: "Topics practiced",
+    prepCertReady: "Type your name and period, then copy your certificate and paste it into your Google Doc.",
+  },
+  es: {
+    topicsPrep: ["Preparación para el examen", "12 preguntas mezcladas + certificado"],
+    prepIntro: "Preparación: 12 preguntas de todos los temas. Puedes fallar 1. Una segunda respuesta incorrecta termina este intento.",
+    prepOneMiss: "Ese fue tu único error permitido. Sigue, pero la próxima respuesta incorrecta termina este intento.",
+    prepOver: "Esa fue tu segunda respuesta incorrecta, así que este intento terminó. Empieza otra vez con preguntas nuevas.",
+    prepPass: "{n} de 12 correctas. ¡Ganaste tu certificado de preparación!",
+    prepLevels: "Preparación: casi todas de nivel Medio, algunas Difíciles.",
+    prepCertTitle: "Certificado de finalización", prepCertSub: "Preparación para el examen de ecología de poblaciones",
+    prepScore: "Puntaje: {n} de 12 ({p}%)", prepCovered: "Temas practicados",
+    prepCertReady: "Escribe tu nombre y periodo, luego copia tu certificado y pégalo en tu documento de Google.",
+  },
+  vi: {
+    topicsPrep: ["Ôn thi", "12 câu hỗn hợp + giấy chứng nhận"],
+    prepIntro: "Ôn thi: 12 câu hỏi từ mọi chủ đề. Em được sai 1 câu. Câu sai thứ hai sẽ kết thúc lượt này.",
+    prepOneMiss: "Đó là lần sai duy nhất được phép. Tiếp tục nhé, nhưng câu sai tiếp theo sẽ kết thúc lượt này.",
+    prepOver: "Đó là câu sai thứ hai, nên lượt này đã kết thúc. Hãy bắt đầu lại với câu hỏi mới.",
+    prepPass: "Đúng {n} trên 12 câu. Em đã đạt giấy chứng nhận ôn thi!",
+    prepLevels: "Ôn thi: phần lớn mức Vừa, một số câu Khó.",
+    prepCertTitle: "Giấy chứng nhận hoàn thành", prepCertSub: "Ôn thi sinh thái học quần thể",
+    prepScore: "Điểm: {n} trên 12 ({p}%)", prepCovered: "Các chủ đề đã luyện tập",
+    prepCertReady: "Gõ tên và tiết học, rồi sao chép giấy chứng nhận và dán vào Google Doc của em.",
+  },
+};
+for (const lg of Object.keys(PREP_TXT)) { Object.assign(TXT[lg], PREP_TXT[lg]); TXT[lg].topics.prep = PREP_TXT[lg].topicsPrep; }
+
+// Name and period are remembered for the session so students don't retype them every try
+state.prepName = ""; state.prepPeriod = "";
+
+// Pick the 12 questions: 2 from each of the 5 main sets (10), then 2 more.
+// Human population gets at most 1 (50% chance); the rest go to different main sets.
+function makePrepRound() {
+  const cats = [];
+  PREP_SETS.forEach((c) => cats.push(c, c));
+  const extra = Math.random() < 0.5 ? ["human"] : [];
+  shuffle(PREP_SETS).slice(0, PREP_TOTAL - cats.length - extra.length).forEach((c) => extra.push(c));
+  const all = shuffle([...cats, ...extra]);
+  const levels = shuffle([...Array(PREP_TOTAL - PREP_HARD).fill("medium"), ...Array(PREP_HARD).fill("hard")]);
+  return { kind: "prep", cats: all, levels, idx: 0, results: [], finished: false, over: false, allowed: PREP_ALLOWED_MISSES, finishedAt: null, msg: null };
+}
+
+// ---------- certificate ----------
+function prepCertHTML() {
+  const r = state.round, m = r.msg;
+  return `<section class="card cert-step" id="prep-cert"><h2 class="prompt">${esc(T("prepCertTitle"))}</h2><p class="lab-q">${esc(T("prepCertReady"))}</p>
+    <div class="answer-row"><label for="prep-name">${esc(T("certName"))}</label><input class="numin cert-in" id="prep-name" type="text" autocomplete="off" value="${esc(state.prepName)}">
+    <label for="prep-period">${esc(T("certPeriod"))}</label><input class="numin cert-in short" id="prep-period" type="text" autocomplete="off" value="${esc(state.prepPeriod)}"></div>
+    <div class="next-row"><button class="btn" type="button" id="prep-copy">📋 ${esc(T("certCopy"))}</button></div>
+    <div id="prep-cert-box">${m ? `<div class="feedback ${m.key === "certCopied" ? "good" : m.key === "certNeedName" ? "bad" : "info"}">${esc(T(m.key))}</div>${m.url ? `<img class="copy-preview" alt="${esc(T("prepCertTitle"))}" src="${m.url}">` : ""}` : ""}</div></section>`;
+}
+function bindPrepCert() {
+  const n = $("prep-name"), p = $("prep-period"), b = $("prep-copy");
+  if (!b) return;
+  n.addEventListener("input", () => { state.prepName = n.value.trim(); });
+  p.addEventListener("input", () => { state.prepPeriod = p.value.trim(); });
+  b.addEventListener("click", () => {
+    const r = state.round;
+    if (!state.prepName) { r.msg = { key: "certNeedName" }; showPrepMsg(); n.focus(); return; }
+    const canvas = prepCertCanvas();
+    const show = (key) => { r.msg = { key, url: canvas.toDataURL("image/png") }; showPrepMsg(); };
+    try {
+      navigator.clipboard.write([new ClipboardItem({ "image/png": new Promise((res) => canvas.toBlob(res, "image/png")) })])
+        .then(() => show("certCopied")).catch(() => show("copyFail"));
+    } catch (e) { show("copyFail"); }
+  });
+}
+function showPrepMsg() {
+  const box = $("prep-cert-box"), m = state.round.msg; if (!box) return;
+  box.innerHTML = `<div class="feedback ${m.key === "certCopied" ? "good" : m.key === "certNeedName" ? "bad" : "info"}" role="status">${esc(T(m.key))}</div>` + (m.url ? `<img class="copy-preview" alt="${esc(T("prepCertTitle"))}" src="${m.url}">` : "");
+}
+// Draw the certificate picture (same look as the Human Population Lab certificate)
+function prepCertCanvas() {
+  const r = state.round, W = 1600, H = 1000, c = document.createElement("canvas");
+  c.width = W; c.height = H;
+  const ctx = c.getContext("2d"), font = (w, s) => `${w} ${s}px Lexend, "Segoe UI", Arial, sans-serif`;
+  const right = r.results.filter(Boolean).length;
+  ctx.fillStyle = "#ffffff"; ctx.fillRect(0, 0, W, H);
+  ctx.strokeStyle = "#0a7584"; ctx.lineWidth = 14; ctx.strokeRect(30, 30, W - 60, H - 60);
+  ctx.strokeStyle = "#f4a23c"; ctx.lineWidth = 4; ctx.strokeRect(58, 58, W - 116, H - 116);
+  ctx.textAlign = "center"; ctx.fillStyle = "#0a7584"; ctx.font = font(700, 70); ctx.fillText(T("prepCertTitle"), W / 2, 180, W - 200);
+  ctx.fillStyle = "#557481"; ctx.font = font(500, 36); ctx.fillText(T("prepCertSub"), W / 2, 245, W - 200);
+  ctx.fillStyle = "#10303b"; ctx.font = font(700, 76); ctx.fillText(state.prepName || "—", W / 2, 365, W - 240);
+  ctx.strokeStyle = "#c6d9de"; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(360, 392); ctx.lineTo(W - 360, 392); ctx.stroke();
+  ctx.fillStyle = "#557481"; ctx.font = font(500, 34);
+  const when = r.finishedAt ? r.finishedAt.toLocaleString(locale(), { dateStyle: "medium", timeStyle: "short" }) : "";
+  ctx.fillText(`${T("certPeriodLabel")}: ${state.prepPeriod || "—"}   ·   ${T("certFinished")}: ${when}`, W / 2, 450, W - 200);
+  ctx.fillStyle = "#1d7f47"; ctx.font = font(700, 52); ctx.fillText(T("prepScore", { n: right, p: Math.round((right / PREP_TOTAL) * 100) }), W / 2, 540);
+  // topics practiced in this try (in site order)
+  const names = ["bide", "curves", "k", "pp", "lf", "human"].filter((k) => r.cats.includes(k)).map((k) => L().topics[k][0]);
+  ctx.fillStyle = "#557481"; ctx.font = font(500, 30); ctx.fillText(T("prepCovered"), W / 2, 610);
+  ctx.textAlign = "left"; ctx.font = font(500, 32);
+  names.forEach((nm, i) => {
+    const col = i % 2, row = Math.floor(i / 2), x = col === 0 ? 400 : 860, y = 665 + row * 52;
+    ctx.fillStyle = "#1d7f47"; ctx.fillText("✓", x, y); ctx.fillStyle = "#10303b"; ctx.fillText(nm, x + 44, y, 400);
+  });
+  ctx.textAlign = "center"; ctx.fillStyle = "#557481"; ctx.font = font(500, 28); ctx.fillText(T("certSite"), W / 2, H - 92);
+  return c;
 }
 
 init();
